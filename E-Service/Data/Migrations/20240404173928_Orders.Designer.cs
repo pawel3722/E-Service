@@ -4,6 +4,7 @@ using E_Service.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Service.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240404173928_Orders")]
+    partial class Orders
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -270,30 +272,6 @@ namespace E_Service.Data.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("E_Service.Models.Model", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Models");
-                });
-
             modelBuilder.Entity("E_Service.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -327,27 +305,6 @@ namespace E_Service.Data.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("E_Service.Models.Part", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ModelId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SerialNumber")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ModelId");
-
-                    b.ToTable("Parts");
-                });
-
             modelBuilder.Entity("E_Service.Models.Review", b =>
                 {
                     b.Property<int>("Id")
@@ -371,78 +328,6 @@ namespace E_Service.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Reviews");
-                });
-
-            modelBuilder.Entity("E_Service.Models.Service", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Guarantee")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PartId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("PartPrice")
-                        .HasColumnType("float");
-
-                    b.Property<double>("ServicePrice")
-                        .HasColumnType("float");
-
-                    b.Property<int>("ServiceTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ServicemanId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("PartId")
-                        .IsUnique();
-
-                    b.HasIndex("ServiceTypeId");
-
-                    b.HasIndex("ServicemanId");
-
-                    b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("E_Service.Models.ServiceType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<double>("MaxPrice")
-                        .HasColumnType("float");
-
-                    b.Property<double>("MinPrice")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ServiceTypes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -616,17 +501,6 @@ namespace E_Service.Data.Migrations
                     b.Navigation("Manager");
                 });
 
-            modelBuilder.Entity("E_Service.Models.Part", b =>
-                {
-                    b.HasOne("E_Service.Models.Model", "Model")
-                        .WithMany("Parts")
-                        .HasForeignKey("ModelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Model");
-                });
-
             modelBuilder.Entity("E_Service.Models.Review", b =>
                 {
                     b.HasOne("E_Service.Models.Order", "Order")
@@ -636,39 +510,6 @@ namespace E_Service.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("E_Service.Models.Service", b =>
-                {
-                    b.HasOne("E_Service.Models.Order", "Order")
-                        .WithMany("Services")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("E_Service.Models.Part", "Part")
-                        .WithOne("Service")
-                        .HasForeignKey("E_Service.Models.Service", "PartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("E_Service.Models.ServiceType", "ServiceType")
-                        .WithMany("Services")
-                        .HasForeignKey("ServiceTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("E_Service.Models.ApplicationUser", "Serviceman")
-                        .WithMany("Services")
-                        .HasForeignKey("ServicemanId");
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Part");
-
-                    b.Navigation("ServiceType");
-
-                    b.Navigation("Serviceman");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -731,32 +572,12 @@ namespace E_Service.Data.Migrations
                     b.Navigation("ReceivedMessages");
 
                     b.Navigation("SentMessages");
-
-                    b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("E_Service.Models.Model", b =>
-                {
-                    b.Navigation("Parts");
                 });
 
             modelBuilder.Entity("E_Service.Models.Order", b =>
                 {
                     b.Navigation("Review")
                         .IsRequired();
-
-                    b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("E_Service.Models.Part", b =>
-                {
-                    b.Navigation("Service")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("E_Service.Models.ServiceType", b =>
-                {
-                    b.Navigation("Services");
                 });
 #pragma warning restore 612, 618
         }

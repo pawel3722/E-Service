@@ -13,5 +13,15 @@ namespace E_Service.Data
         {
 
         }
+
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<Order> Orders{ get; set; }
+        public DbSet<Review> Reviews{ get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<ServiceType> ServiceTypes { get; set; }
+        public DbSet<Part> Parts { get; set; }
+        public DbSet<Model> Models { get; set; }
+
+
     }
 }
