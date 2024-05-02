@@ -1,0 +1,6 @@
+@E2_Service_HostAddress = http://localhost:5286
+
+GET {{E2_Service_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
