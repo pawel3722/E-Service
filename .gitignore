@@ -3,7 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-E2-Service/appsettings.json
+EService/appsettings.json
+EService/appsettings.Development.json
+E-Service
 
 # User-specific files
 *.rsuser
