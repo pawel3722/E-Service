@@ -1,27 +1,26 @@
-﻿using Azure.Core;
+﻿using EService.Dtos.ModelDtos;
 using EService.Dtos.ServiceTypeDtos;
 using EService.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ServiceTypeController : ControllerBase
+    public class ModelController : ControllerBase
     {
-        private readonly IServiceTypeService _serviceTypeService;
+        private readonly IModelService _modelService;
 
-        public ServiceTypeController(IServiceTypeService service)
+        public ModelController(IModelService service)
         {
-            _serviceTypeService = service;
+            _modelService = service;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _serviceTypeService.GetServiceType(id);
+            var result = await _modelService.GetModel(id);
             if (result != null)
             {
                 return Ok(result);
@@ -32,8 +31,8 @@ namespace EService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await _serviceTypeService.GetAllServiceTypes();
-            if(result != null)
+            var result = await _modelService.GetAllModels();
+            if (result != null)
             {
                 return Ok(result);
             }
@@ -41,19 +40,19 @@ namespace EService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ServiceTypeDto request)
+        public async Task<IActionResult> Create(ModelDto request)
         {
-            var result = await _serviceTypeService.CreateServiceType(request);
+            var result = await _modelService.CreateModel(request);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ServiceTypeDto request, int id)
+        public async Task<IActionResult> Update(ModelDto request, int id)
         {
-            var result = await _serviceTypeService.UpdateServiceType(request, id);
-            if(result.Confirmed)
+            var result = await _modelService.UpdateModel(request, id);
+            if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
         }
@@ -61,8 +60,8 @@ namespace EService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _serviceTypeService.DeleteServiceType(id);
-            if(result.Confirmed)
+            var result = await _modelService.DeleteModel(id);
+            if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
         }

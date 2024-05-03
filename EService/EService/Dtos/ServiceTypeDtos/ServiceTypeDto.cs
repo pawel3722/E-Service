@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace EService.Dtos.ServiceTypeDtos
 {
-    public class CreateServiceTypeDto
+    public class ServiceTypeDto
     {
         [Required]
         public string Name { get; set; } = string.Empty;
