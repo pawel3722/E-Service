@@ -4,21 +4,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EService.Repositories
 {
-    public class EServiceRepository : IEServiceRepository
+    public class AuthRepository : IAuthRepository
     {
         private readonly ApplicationDbContext _context;
-        public EServiceRepository(ApplicationDbContext context)
+        public AuthRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task<ApplicationUser?> GetUserWithEmail(string email)
+        public async Task<ApplicationUser?> GetUserByEmail(string email)
         {
             return await Task.Run(() => _context.Users.Where(u => u.Email == email).
             Include(u => u.Roles).
             FirstOrDefaultAsync());
         }
-        public async Task<ApplicationUser?> GetUserWithRefreshToken(string refreshToken)
+        public async Task<ApplicationUser?> GetUserByRefreshToken(string refreshToken)
         {
             return await Task.Run(() => _context.Users.Where(u => u.RefreshToken == refreshToken).
             Include(u => u.Roles).
@@ -35,9 +35,9 @@ namespace EService.Repositories
         public async Task AddUser(ApplicationUser user)
         {
             await _context.Users.AddAsync(user);
-            await SaveChanges();
+            await SaveChangesAsync();
         }
-        public async Task SaveChanges()
+        public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }

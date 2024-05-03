@@ -1,4 +1,4 @@
-﻿namespace EService.Dtos
+﻿namespace EService.Dtos.AuthDtos
 {
     public class TokensResponseDto
     {

@@ -1,4 +1,4 @@
-﻿using EService.Dtos;
+﻿using EService.Dtos.AuthDtos;
 using EService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

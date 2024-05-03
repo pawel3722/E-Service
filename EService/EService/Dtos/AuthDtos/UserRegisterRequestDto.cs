@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EService.Dtos
+namespace EService.Dtos.AuthDtos
 {
     public class UserRegisterRequestDto
     {

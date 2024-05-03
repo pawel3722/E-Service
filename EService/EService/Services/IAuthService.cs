@@ -1,4 +1,4 @@
-﻿using EService.Dtos;
+﻿using EService.Dtos.AuthDtos;
 
 namespace EService.Services
 {

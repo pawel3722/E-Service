@@ -3,8 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-EService/appsettings.json
-EService/appsettings.Development.json
+EService/EService/appsettings.json
+EService/EService/appsettings.Development.json
 E-Service
 
 # User-specific files

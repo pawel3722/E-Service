@@ -1,4 +1,4 @@
-﻿using EService.Dtos;
+﻿using EService.Dtos.AuthDtos;
 using EService.Models;
 using EService.Repositories;
 using Microsoft.IdentityModel.Tokens;
@@ -10,22 +10,22 @@ namespace EService.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IEServiceRepository _repository;
+        private readonly IAuthRepository _authRepository;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IEServiceRepository repository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IAuthRepository repository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _repository = repository;
+            _authRepository = repository;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<(bool Confirmed, string Response)> RegisterUser(UserRegisterRequestDto request)
         {
-            if (!await _repository.UserExists(request.Email))
+            if (!await _authRepository.UserExists(request.Email))
             {
-                var role = await _repository.GetRole("Client");
+                var role = await _authRepository.GetRole("Client");
                 CreatePasswordHash(request.Password, out byte[] PasswordHash, out byte[] PasswordSalt);
                 var newUser = new ApplicationUser
                 {
@@ -36,7 +36,7 @@ namespace EService.Services
                     PasswordSalt = PasswordSalt,
                     Roles = new List<Role> { role! }
                 };
-                await _repository.AddUser(newUser);
+                await _authRepository.AddUser(newUser);
                 return await Task.FromResult((true, "User has been succesfully created."));
             }
             else return await Task.FromResult((false, "User with specified email already exists."));
@@ -44,7 +44,7 @@ namespace EService.Services
 
         public async Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> LoginUser(UserLoginRequestDto request)
         {
-            var user = await _repository.GetUserWithEmail(request.Email);
+            var user = await _authRepository.GetUserByEmail(request.Email);
             if (user != null)
             {
                 if (VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
@@ -60,7 +60,7 @@ namespace EService.Services
                     };
                     SetRefreshTokenInResponse(refreshToken);
                     await SetRefreshTokenForUser(refreshToken, user);
-                    return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome {user.Name}.", tokens));
+                    return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome, {user.Name}.", tokens));
                 }
                 else return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Incorrect email or password.", null));
             }
@@ -70,7 +70,7 @@ namespace EService.Services
         public async Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> RefreshToken()
         {
             var refreshToken = _httpContextAccessor.HttpContext!.Request.Cookies["refreshToken"];
-            var user = await _repository.GetUserWithRefreshToken(refreshToken!);
+            var user = await _authRepository.GetUserByRefreshToken(refreshToken!);
             if (user != null)
             {
                 if (user.TokenExpires > DateTime.Now)
@@ -143,7 +143,7 @@ namespace EService.Services
             user.RefreshToken = refreshToken.Token;
             user.TokenExpires = refreshToken.Expires;
             user.TokenCreated = refreshToken.CreatedAt;
-            await _repository.SaveChanges();
+            await _authRepository.SaveChangesAsync();
         }
     }
 }
