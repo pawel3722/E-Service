@@ -19,7 +19,7 @@ namespace EService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _reviewService.GetReview(id);
+            var result = await _reviewService.GetReviewAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -30,7 +30,7 @@ namespace EService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await _reviewService.GetAllReviews();
+            var result = await _reviewService.GetAllReviewsAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -39,16 +39,16 @@ namespace EService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ReviewDto request)
+        public async Task<IActionResult> Create(CreateReviewDto request)
         {
-            var result = await _reviewService.CreateReview(request);
+            var result = await _reviewService.CreateReviewAsync(request);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ReviewDto request, int id)
+        public async Task<IActionResult> Update(UpdateReviewDto request, int id)
         {
             var result = await _reviewService.UpdateReview(request, id);
             if (result.Confirmed)

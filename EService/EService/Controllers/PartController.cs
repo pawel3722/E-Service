@@ -25,7 +25,7 @@ namespace EService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _partService.GetPart(id);
+            var result = await _partService.GetPartAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -36,7 +36,7 @@ namespace EService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await _partService.GetAllParts();
+            var result = await _partService.GetAllPartsAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -45,18 +45,18 @@ namespace EService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(PartDto request)
+        public async Task<IActionResult> Create(CreatePartDto request)
         {
-            var result = await _partService.CreatePart(request);
+            var result = await _partService.CreatePartAsync(request);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(PartDto request, int id)
+        public async Task<IActionResult> Update(UpdatePartDto request, int id)
         {
-            var result = await _partService.UpdatePart(request, id);
+            var result = await _partService.UpdatePartAsync(request, id);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
@@ -65,7 +65,7 @@ namespace EService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _partService.DeletePart(id);
+            var result = await _partService.DeletePartAsync(id);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);

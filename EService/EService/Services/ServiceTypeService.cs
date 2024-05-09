@@ -1,7 +1,7 @@
 ﻿using Azure.Core;
 using EService.Dtos.ServiceTypeDtos;
 using EService.Models;
-using EService.Repositories;
+using EService.Repositories.Interfaces;
 
 namespace EService.Services
 {
@@ -12,17 +12,17 @@ namespace EService.Services
         { 
             _serviceTypeRepository = serviceTypeRepository;
         }
-        public async Task<List<ServiceType>> GetAllServiceTypes()
+        public async Task<List<ServiceType>> GetAllServiceTypesAsync()
         {
-            return await _serviceTypeRepository.GetAllServiceTypes();
+            return await _serviceTypeRepository.GetAllServiceTypesAsync();
         }
-        public async Task<ServiceType?> GetServiceType(int id)
+        public async Task<ServiceType?> GetServiceTypeAsync(int id)
         {
-            return await _serviceTypeRepository.GetServiceTypeById(id);
+            return await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
         }
-        public async Task<(bool Confirmed, string Response)> CreateServiceType(ServiceTypeDto request)
+        public async Task<(bool Confirmed, string Response)> CreateServiceTypeAsync(CreateServiceTypeDto request)
         {
-            var serviceType = await _serviceTypeRepository.GetServiceTypeByName(request.Name);
+            var serviceType = await _serviceTypeRepository.GetServiceTypeByNameAsync(request.Name);
             if (serviceType == null)
             {
                 if(request.MaxPrice >= request.MinPrice)
@@ -40,16 +40,16 @@ namespace EService.Services
             }
             else return await Task.FromResult((false, "Such service type already exists."));
         }
-        public async Task<(bool Confirmed, string Response)> UpdateServiceType(ServiceTypeDto request, int id)
+        public async Task<(bool Confirmed, string Response)> UpdateServiceTypeAsync(UpdateServiceTypeDto request, int id)
         {
-            var serviceType = await _serviceTypeRepository.GetServiceTypeById(id);
+            var serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
             if (serviceType != null)
             {
                 if (request.MaxPrice >= request.MinPrice)
                 {
-                    serviceType.Name = request.Name;
-                    serviceType.MinPrice = request.MinPrice;
-                    serviceType.MaxPrice = request.MaxPrice;
+                    if(request.Name != null) serviceType.Name = request.Name;
+                    if (request.MinPrice != null) serviceType.MinPrice = request.MinPrice.Value;
+                    if (request.MaxPrice != null) serviceType.MaxPrice = request.MaxPrice.Value;
                     await _serviceTypeRepository.SaveChangesAsync();
                     return await Task.FromResult((true, "Service type successfully updated."));
                 }
@@ -58,9 +58,9 @@ namespace EService.Services
             else return await Task.FromResult((false, "Service type with given id does not exist."));
         }
 
-        public async Task<(bool Confirmed, string Response)> DeleteServiceType(int id)
+        public async Task<(bool Confirmed, string Response)> DeleteServiceTypeAsync(int id)
         {
-            var serviceType = await _serviceTypeRepository.GetServiceTypeById(id);
+            var serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
             if (serviceType != null)
             {
                 await _serviceTypeRepository.RemoveServiceTypeAsync(serviceType);

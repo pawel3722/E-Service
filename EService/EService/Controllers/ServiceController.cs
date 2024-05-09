@@ -39,7 +39,7 @@ namespace EService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ServiceDto request)
+        public async Task<IActionResult> Create(CreateServiceDto request)
         {
             var result = await _serviceService.CreateService(request);
             if (result.Confirmed)
@@ -48,7 +48,7 @@ namespace EService.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ServiceDto request, int id)
+        public async Task<IActionResult> Update(UpdateServiceDto request, int id)
         {
             var result = await _serviceService.UpdateService(request, id);
             if (result.Confirmed)

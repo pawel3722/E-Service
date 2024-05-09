@@ -1,5 +1,7 @@
 ﻿using EService.Data;
 using EService.Models;
+using EService.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EService.Repositories
 {
@@ -11,14 +13,18 @@ namespace EService.Repositories
         {
             _context = context;
         }
-        public async Task<Part?> GetPartById(int id)
+        public async Task<Part?> GetPartByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Parts.FindAsync(id).Result);
+            return await Task.Run(() => _context.Parts.FirstOrDefaultAsync(p => p.Id == id));
 
         }
-        public async Task<List<Part>> GetAllParts()
+        public async Task<Part?> GetPartBySerialNumber(int serialNumber)
         {
-            return await Task.Run(() => _context.Parts.ToList());
+            return await Task.Run(() => _context.Parts.FirstOrDefaultAsync(p => p.SerialNumber == serialNumber));
+        }
+        public async Task<List<Part>> GetAllPartsAsync()
+        {
+            return await Task.Run(() => _context.Parts.ToListAsync());
 
         }
         public async Task AddPartAsync(Part part)

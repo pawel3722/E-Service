@@ -10,7 +10,7 @@ namespace EService.Dtos.AuthDtos
         public string Surname { get; set; } = string.Empty;
         [Required, EmailAddress]
         public string Email { get; set; } = string.Empty;
-        [Required, RegularExpression("^(?=.{8,})(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).*$",
+        [Required, RegularExpression("^(?=.{8,})(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[^A-Za-z0-9]).*$",
             ErrorMessage = "Password must contain at least eight characters and one lowercase letter, one uppercase letter, one special character and one digit.")]
         public string Password { get; set; } = string.Empty;
         [Required, Compare("Password")]

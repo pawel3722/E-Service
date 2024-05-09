@@ -19,7 +19,7 @@ namespace EService.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterRequestDto request)
         {
-            var result = await _authService.RegisterUser(request);
+            var result = await _authService.RegisterUserAsync(request);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
@@ -28,7 +28,7 @@ namespace EService.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginRequestDto request)
         {
-            var result = await _authService.LoginUser(request);
+            var result = await _authService.LoginUserAsync(request);
             if (result.Confirmed)
                 if (result.Tokens != null)
                     return Ok(result.Tokens);
@@ -39,7 +39,7 @@ namespace EService.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
-            var result = await _authService.RefreshToken();
+            var result = await _authService.RefreshTokenAsync();
             if (result.Confirmed)
                 if (result.Tokens != null)
                     return Ok(result.Tokens);

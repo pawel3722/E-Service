@@ -21,7 +21,7 @@ namespace EService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _serviceTypeService.GetServiceType(id);
+            var result = await _serviceTypeService.GetServiceTypeAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -32,7 +32,7 @@ namespace EService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await _serviceTypeService.GetAllServiceTypes();
+            var result = await _serviceTypeService.GetAllServiceTypesAsync();
             if(result != null)
             {
                 return Ok(result);
@@ -41,18 +41,18 @@ namespace EService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ServiceTypeDto request)
+        public async Task<IActionResult> Create(CreateServiceTypeDto request)
         {
-            var result = await _serviceTypeService.CreateServiceType(request);
+            var result = await _serviceTypeService.CreateServiceTypeAsync(request);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ServiceTypeDto request, int id)
+        public async Task<IActionResult> Update(UpdateServiceTypeDto request, int id)
         {
-            var result = await _serviceTypeService.UpdateServiceType(request, id);
+            var result = await _serviceTypeService.UpdateServiceTypeAsync(request, id);
             if(result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
@@ -61,7 +61,7 @@ namespace EService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _serviceTypeService.DeleteServiceType(id);
+            var result = await _serviceTypeService.DeleteServiceTypeAsync(id);
             if(result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);

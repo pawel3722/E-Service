@@ -1,12 +1,12 @@
 ﻿using EService.Models;
 
-namespace EService.Repositories
+namespace EService.Repositories.Interfaces
 {
     public interface IModelRepository
     {
-        public Task<Model?> GetModelByName(string name);
-        public Task<Model?> GetModelById(int id);
-        public Task<List<Model>> GetAllModels();
+        public Task<Model?> GetModelByNameAsync(string name);
+        public Task<Model?> GetModelByIdAsync(int id);
+        public Task<List<Model>> GetAllModelsAsync();
         public Task AddModelAsync(Model model);
         public Task RemoveModelAsync(Model model);
         public Task SaveChangesAsync();

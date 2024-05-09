@@ -1,5 +1,6 @@
 ﻿using EService.Data;
 using EService.Models;
+using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 
@@ -13,17 +14,17 @@ namespace EService.Repositories
         {
             _context = context;
         }
-        public async Task<ServiceType?> GetServiceTypeByName(string name)
+        public async Task<ServiceType?> GetServiceTypeByNameAsync(string name)
         {
             return await Task.Run(() => _context.ServiceTypes.Where(s => s.Name == name).FirstOrDefaultAsync());
         }
-        public async Task<ServiceType?> GetServiceTypeById(int id)
+        public async Task<ServiceType?> GetServiceTypeByIdAsync(int id)
         {
-            return await Task.Run(() => _context.ServiceTypes.FindAsync(id).Result);
+            return await Task.Run(() => _context.ServiceTypes.FirstOrDefaultAsync(st => st.Id == id));
         }
-        public async Task<List<ServiceType>> GetAllServiceTypes()
+        public async Task<List<ServiceType>> GetAllServiceTypesAsync()
         {
-            return await Task.Run(() => _context.ServiceTypes.ToList());
+            return await Task.Run(() => _context.ServiceTypes.ToListAsync());
         }
         public async Task AddServiceTypeAsync(ServiceType serviceType)
         {

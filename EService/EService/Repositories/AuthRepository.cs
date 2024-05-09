@@ -1,5 +1,6 @@
 ﻿using EService.Data;
 using EService.Models;
+using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EService.Repositories
@@ -12,29 +13,40 @@ namespace EService.Repositories
             _context = context;
         }
 
-        public async Task<ApplicationUser?> GetUserByEmail(string email)
+        public async Task<ApplicationUser?> GetUserByIdAsync(int id)
+        {
+            return await Task.Run(() => _context.Users.Where(u => u.Id == id).
+            Include(u => u.Roles).
+            FirstOrDefaultAsync());
+        }
+        public async Task<ApplicationUser?> GetUserByEmailAsync(string email)
         {
             return await Task.Run(() => _context.Users.Where(u => u.Email == email).
             Include(u => u.Roles).
             FirstOrDefaultAsync());
         }
-        public async Task<ApplicationUser?> GetUserByRefreshToken(string refreshToken)
+        public async Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken)
         {
             return await Task.Run(() => _context.Users.Where(u => u.RefreshToken == refreshToken).
             Include(u => u.Roles).
             FirstOrDefaultAsync());
         }
-        public async Task<Role?> GetRole(string name)
+        public async Task<Role?> GetRoleAsync(string name)
         {
             return await Task.Run(() => _context.Roles.FirstOrDefaultAsync(r => r.Name == name));
         }
-        public async Task<bool> UserExists(string email)
+        public async Task<bool> UserExistsAsync(string email)
         {
             return await Task.Run(() => _context.Users.Where(u => u.Email == email).AnyAsync());
         }
-        public async Task AddUser(ApplicationUser user)
+        public async Task AddUserAsync(ApplicationUser user)
         {
             await _context.Users.AddAsync(user);
+            await SaveChangesAsync();
+        }
+        public async Task AddRoleAsync(Role role)
+        {
+            await _context.Roles.AddAsync(role);
             await SaveChangesAsync();
         }
         public async Task SaveChangesAsync()

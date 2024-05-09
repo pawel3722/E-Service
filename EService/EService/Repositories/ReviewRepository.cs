@@ -1,5 +1,7 @@
 ﻿using EService.Data;
 using EService.Models;
+using EService.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EService.Repositories
 {
@@ -11,14 +13,14 @@ namespace EService.Repositories
         {
             _context = context;
         }
-        public async Task<Review?> GetReviewById(int id)
+        public async Task<Review?> GetReviewByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Reviews.FindAsync(id).Result);
+            return await Task.Run(() => _context.Reviews.FirstOrDefaultAsync(r => r.Id == id));
 
         }
-        public async Task<List<Review>> GetAllReviews()
+        public async Task<List<Review>> GetAllReviewsAsync()
         {
-            return await Task.Run(() => _context.Reviews.ToList());
+            return await Task.Run(() => _context.Reviews.ToListAsync());
 
         }
         public async Task AddReviewAsync(Review review)

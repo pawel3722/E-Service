@@ -1,4 +1,7 @@
-﻿namespace EService.Models
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace EService.Models
 {
     public class ServiceType
     {

@@ -17,7 +17,7 @@ namespace EService.Models
         public int? ManagerId { get; set; }
         public ApplicationUser? Manager { get; set; }
 
-        public Review Review { get; set; }
+        public Review? Review { get; set; }
 
         public List<Service> Services { get; set; } = new List<Service>();
 

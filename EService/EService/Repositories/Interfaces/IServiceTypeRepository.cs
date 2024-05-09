@@ -1,12 +1,12 @@
 ﻿using EService.Models;
 
-namespace EService.Repositories
+namespace EService.Repositories.Interfaces
 {
     public interface IServiceTypeRepository
     {
-        public Task<ServiceType?> GetServiceTypeByName(string name);
-        public Task<ServiceType?> GetServiceTypeById(int id);
-        public Task<List<ServiceType>> GetAllServiceTypes();
+        public Task<ServiceType?> GetServiceTypeByNameAsync(string name);
+        public Task<ServiceType?> GetServiceTypeByIdAsync(int id);
+        public Task<List<ServiceType>> GetAllServiceTypesAsync();
         public Task AddServiceTypeAsync(ServiceType serviceType);
         public Task RemoveServiceTypeAsync(ServiceType serviceType);
         public Task SaveChangesAsync();

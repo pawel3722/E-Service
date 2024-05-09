@@ -4,15 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EService.Dtos.MessageDtos
 {
-    public class MessageDto
+    public class CreateMessageDto
     {
         [Required]
         public string Text { get; set; } = string.Empty;
-        [Required]
-        public DateTime SendingDate { get; set; }
-        [Required]
-        public DateTime ReceivingDate { get; set; }
-        public int? SendingUserId { get; set; }
+        public DateTime SendingDate { get; set; } = DateTime.Now;
         [Required]
         public int ReceivingUserId { get; set; }
     }

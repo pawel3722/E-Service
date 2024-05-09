@@ -1,11 +1,11 @@
 ﻿using EService.Models;
 
-namespace EService.Repositories
+namespace EService.Repositories.Interfaces
 {
     public interface IReviewRepository
     {
-        public Task<Review?> GetReviewById(int id);
-        public Task<List<Review>> GetAllReviews();
+        public Task<Review?> GetReviewByIdAsync(int id);
+        public Task<List<Review>> GetAllReviewsAsync();
         public Task AddReviewAsync(Review Review);
         public Task RemoveReviewAsync(Review Review);
         public Task SaveChangesAsync();

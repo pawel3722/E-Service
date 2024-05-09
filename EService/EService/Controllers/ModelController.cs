@@ -20,7 +20,7 @@ namespace EService.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var result = await _modelService.GetModel(id);
+            var result = await _modelService.GetModelAsync(id);
             if (result != null)
             {
                 return Ok(result);
@@ -31,7 +31,7 @@ namespace EService.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await _modelService.GetAllModels();
+            var result = await _modelService.GetAllModelsAsync();
             if (result != null)
             {
                 return Ok(result);
@@ -40,18 +40,18 @@ namespace EService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ModelDto request)
+        public async Task<IActionResult> Create(CreateModelDto request)
         {
-            var result = await _modelService.CreateModel(request);
+            var result = await _modelService.CreateModelAsync(request);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(ModelDto request, int id)
+        public async Task<IActionResult> Update(UpdateModelDto request, int id)
         {
-            var result = await _modelService.UpdateModel(request, id);
+            var result = await _modelService.UpdateModelAsync(request, id);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
@@ -60,7 +60,7 @@ namespace EService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _modelService.DeleteModel(id);
+            var result = await _modelService.DeleteModelAsync(id);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);

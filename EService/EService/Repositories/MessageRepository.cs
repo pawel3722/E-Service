@@ -1,5 +1,7 @@
 ﻿using EService.Data;
 using EService.Models;
+using EService.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EService.Repositories
 {
@@ -11,13 +13,16 @@ namespace EService.Repositories
         {
             _context = context;
         }
-        public async Task<Message?> GetMessageById(int id)
+        public async Task<Message?> GetMessageByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Messages.FindAsync(id).Result);
+            return await Task.Run(() => _context.Messages.FirstOrDefaultAsync(m => m.Id == id));
         }
-        public async Task<List<Message>> GetAllMessages()
+        public async Task<List<Message>> GetAllMessagesAsync()
         {
-            return await Task.Run(() => _context.Messages.ToList());
+            return await Task.Run(() => _context.Messages.
+            Include(m => m.ReceivingUser).
+            Include(m => m.SendingUser).
+            ToListAsync());
         }
         public async Task AddMessageAsync(Message message)
         {

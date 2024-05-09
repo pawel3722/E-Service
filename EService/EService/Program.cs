@@ -1,7 +1,11 @@
+//TODO: Sprawdzanie ról u¿ytkowników przy zamówieniu i przy us³ugach.
+
 using EService.Data;
 using EService.Models;
 using EService.Repositories;
+using EService.Repositories.Interfaces;
 using EService.Services;
+using EService.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -50,6 +54,7 @@ builder.Services.AddScoped<IPartRepository, PartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
@@ -59,6 +64,7 @@ builder.Services.AddScoped<IPartService, PartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
+builder.Services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
 var app = builder.Build();
 

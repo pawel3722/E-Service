@@ -1,6 +1,6 @@
 ﻿using EService.Models;
 
-namespace EService.Repositories
+namespace EService.Repositories.Interfaces
 {
     public interface IServiceRepository
     {

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace EService.Dtos.PartDtos
 
 {
-    public class PartDto
+    public class CreatePartDto
     {
         public int SerialNumber { get; set; }
         public int ModelId { get; set; }

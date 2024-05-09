@@ -1,11 +1,11 @@
 ﻿using EService.Models;
 
-namespace EService.Repositories
+namespace EService.Repositories.Interfaces
 {
     public interface IMessageRepository
     {
-        public Task<Message?> GetMessageById(int id);
-        public Task<List<Message>> GetAllMessages();
+        public Task<Message?> GetMessageByIdAsync(int id);
+        public Task<List<Message>> GetAllMessagesAsync();
         public Task AddMessageAsync(Message Message);
         public Task RemoveMessageAsync(Message Message);
         public Task SaveChangesAsync();

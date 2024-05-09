@@ -1,6 +1,6 @@
 ﻿using EService.Dtos.AuthDtos;
 using EService.Models;
-using EService.Repositories;
+using EService.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,11 +21,16 @@ namespace EService.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<(bool Confirmed, string Response)> RegisterUser(UserRegisterRequestDto request)
+        public async Task<(bool Confirmed, string Response)> RegisterUserAsync(UserRegisterRequestDto request)
         {
-            if (!await _authRepository.UserExists(request.Email))
+            if (!await _authRepository.UserExistsAsync(request.Email))
             {
-                var role = await _authRepository.GetRole("Client");
+                var role = await _authRepository.GetRoleAsync("Client");
+                if (role == null)
+                {
+                    role = new Role() { Name = "Client" };
+                    await _authRepository.AddRoleAsync(role);
+                }
                 CreatePasswordHash(request.Password, out byte[] PasswordHash, out byte[] PasswordSalt);
                 var newUser = new ApplicationUser
                 {
@@ -36,15 +41,15 @@ namespace EService.Services
                     PasswordSalt = PasswordSalt,
                     Roles = new List<Role> { role! }
                 };
-                await _authRepository.AddUser(newUser);
+                role!.Users.Add(newUser);
+                await _authRepository.AddUserAsync(newUser);
                 return await Task.FromResult((true, "User has been succesfully created."));
             }
             else return await Task.FromResult((false, "User with specified email already exists."));
         }
-
-        public async Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> LoginUser(UserLoginRequestDto request)
+        public async Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> LoginUserAsync(UserLoginRequestDto request)
         {
-            var user = await _authRepository.GetUserByEmail(request.Email);
+            var user = await _authRepository.GetUserByEmailAsync(request.Email);
             if (user != null)
             {
                 if (VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
@@ -59,18 +64,17 @@ namespace EService.Services
                         Expires = refreshToken.Expires
                     };
                     SetRefreshTokenInResponse(refreshToken);
-                    await SetRefreshTokenForUser(refreshToken, user);
+                    await SetRefreshTokenForUserAsync(refreshToken, user);
                     return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome, {user.Name}.", tokens));
                 }
                 else return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Incorrect email or password.", null));
             }
             else return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Incorrect email or password.", null));
         }
-
-        public async Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> RefreshToken()
+        public async Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> RefreshTokenAsync()
         {
             var refreshToken = _httpContextAccessor.HttpContext!.Request.Cookies["refreshToken"];
-            var user = await _authRepository.GetUserByRefreshToken(refreshToken!);
+            var user = await _authRepository.GetUserByRefreshTokenAsync(refreshToken!);
             if (user != null)
             {
                 if (user.TokenExpires > DateTime.Now)
@@ -85,7 +89,7 @@ namespace EService.Services
                         Expires = newRefreshToken.Expires
                     };
                     SetRefreshTokenInResponse(newRefreshToken);
-                    await SetRefreshTokenForUser(newRefreshToken, user);
+                    await SetRefreshTokenForUserAsync(newRefreshToken, user);
                     return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome {user.Name}.", tokens));
                 }
                 else return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Token expired.", null));
@@ -138,7 +142,7 @@ namespace EService.Services
             };
             _httpContextAccessor.HttpContext!.Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
         }
-        private async Task SetRefreshTokenForUser((string Token, DateTime CreatedAt, DateTime Expires) refreshToken, ApplicationUser user)
+        private async Task SetRefreshTokenForUserAsync((string Token, DateTime CreatedAt, DateTime Expires) refreshToken, ApplicationUser user)
         {
             user.RefreshToken = refreshToken.Token;
             user.TokenExpires = refreshToken.Expires;

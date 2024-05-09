@@ -88,9 +88,6 @@ namespace EService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("ReceivingDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("ReceivingUserId")
                         .HasColumnType("int");
 
@@ -240,16 +237,16 @@ namespace EService.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime?>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Guarantee")
+                    b.Property<DateTime?>("Guarantee")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("PartId")
+                    b.Property<int?>("PartId")
                         .HasColumnType("int");
 
                     b.Property<double>("PartPrice")
@@ -272,7 +269,8 @@ namespace EService.Migrations
                     b.HasIndex("OrderId");
 
                     b.HasIndex("PartId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[PartId] IS NOT NULL");
 
                     b.HasIndex("ServiceTypeId");
 
@@ -385,9 +383,7 @@ namespace EService.Migrations
 
                     b.HasOne("EService.Models.Part", "Part")
                         .WithOne("Service")
-                        .HasForeignKey("EService.Models.Service", "PartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EService.Models.Service", "PartId");
 
                     b.HasOne("EService.Models.ServiceType", "ServiceType")
                         .WithMany("Services")
@@ -428,16 +424,14 @@ namespace EService.Migrations
 
             modelBuilder.Entity("EService.Models.Order", b =>
                 {
-                    b.Navigation("Review")
-                        .IsRequired();
+                    b.Navigation("Review");
 
                     b.Navigation("Services");
                 });
 
             modelBuilder.Entity("EService.Models.Part", b =>
                 {
-                    b.Navigation("Service")
-                        .IsRequired();
+                    b.Navigation("Service");
                 });
 
             modelBuilder.Entity("EService.Models.ServiceType", b =>

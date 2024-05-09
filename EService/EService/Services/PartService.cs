@@ -1,53 +1,69 @@
 ﻿using EService.Dtos.PartDtos;
 using EService.Models;
-using EService.Repositories;
+using EService.Repositories.Interfaces;
 
 namespace EService.Services
 {
     public class PartService : IPartService
     {
         private readonly IPartRepository _partRepository;
-        public PartService(IPartRepository partRepository)
+        private readonly IModelRepository _modelRepository;
+        public PartService(IPartRepository partRepository, IModelRepository modelRepository)
         {
             _partRepository = partRepository;
+            _modelRepository = modelRepository;
         }
 
-
-
-        public async Task<List<Part>> GetAllParts()
+        public async Task<List<Part>> GetAllPartsAsync()
         {
-            return await _partRepository.GetAllParts();
+            return await _partRepository.GetAllPartsAsync();
         }
-        public async Task<Part?> GetPart(int id)
+        public async Task<Part?> GetPartAsync(int id)
         {
-            return await _partRepository.GetPartById(id);
+            return await _partRepository.GetPartByIdAsync(id);
         }
-        public async Task<(bool Confirmed, string Response)> CreatePart(PartDto request)
+        public async Task<(bool Confirmed, string Response)> CreatePartAsync(CreatePartDto request)
         {
-            var part = new Part
+            var model = await _modelRepository.GetModelByIdAsync(request.ModelId);
+            if(model != null)
             {
-                SerialNumber = request.SerialNumber,
-                ModelId = request.ModelId
-            };
-            await _partRepository.AddPartAsync(part);
-            return await Task.FromResult((true, "Part successfully created."));
+                var part = new Part
+                {
+                    SerialNumber = request.SerialNumber,
+                    ModelId = request.ModelId,
+                    Model = model
+                };
+                model.Parts.Add(part);
+                await _partRepository.AddPartAsync(part);
+                return await Task.FromResult((true, "Part successfully created."));
+            }
+            return await Task.FromResult((false, "Model with given id does not exist."));
         }
-        public async Task<(bool Confirmed, string Response)> UpdatePart(PartDto request, int id)
+        public async Task<(bool Confirmed, string Response)> UpdatePartAsync(UpdatePartDto request, int id)
         {
-            var part = await _partRepository.GetPartById(id);
+            var part = await _partRepository.GetPartByIdAsync(id);
             if (part != null)
             {
-                part.SerialNumber = request.SerialNumber;
-                part.ModelId = request.ModelId;
+                Model? model = null;
+                if (request.ModelId != null)
+                {
+                    model = await _modelRepository.GetModelByIdAsync(request.ModelId.Value);
+                    if(model == null) return await Task.FromResult((false, "Model with given id does not exist."));
+                    part.Model.Parts.Remove(part);
+                    part.ModelId = request.ModelId.Value;
+                    part.Model = model;
+                    model.Parts.Add(part);
+                }
+                if(request.SerialNumber != null) part.SerialNumber = request.SerialNumber.Value;
                 await _partRepository.SaveChangesAsync();
                 return await Task.FromResult((true, "Part successfully updated."));
             }
             else return await Task.FromResult((false, "Part with given id does not exist."));
         }
 
-        public async Task<(bool Confirmed, string Response)> DeletePart(int id)
+        public async Task<(bool Confirmed, string Response)> DeletePartAsync(int id)
         {
-            var part = await _partRepository.GetPartById(id);
+            var part = await _partRepository.GetPartByIdAsync(id);
             if (part != null)
             {
                 await _partRepository.RemovePartAsync(part);
