@@ -18,7 +18,7 @@ namespace EService.Repositories
             return await Task.Run(() => _context.Parts.FirstOrDefaultAsync(p => p.Id == id));
 
         }
-        public async Task<Part?> GetPartBySerialNumber(int serialNumber)
+        public async Task<Part?> GetPartBySerialNumber(string serialNumber)
         {
             return await Task.Run(() => _context.Parts.FirstOrDefaultAsync(p => p.SerialNumber == serialNumber));
         }

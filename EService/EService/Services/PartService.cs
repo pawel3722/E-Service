@@ -24,20 +24,21 @@ namespace EService.Services
         }
         public async Task<(bool Confirmed, string Response)> CreatePartAsync(CreatePartDto request)
         {
-            var model = await _modelRepository.GetModelByIdAsync(request.ModelId);
-            if(model != null)
+            Model? model = null;
+            if (request.ModelId != null)
             {
-                var part = new Part
-                {
-                    SerialNumber = request.SerialNumber,
-                    ModelId = request.ModelId,
-                    Model = model
-                };
-                model.Parts.Add(part);
-                await _partRepository.AddPartAsync(part);
-                return await Task.FromResult((true, "Part successfully created."));
+                model = await _modelRepository.GetModelByIdAsync(request.ModelId.Value);
+                if (model == null) return await Task.FromResult((false, "Model with given id does not exist."));
             }
-            return await Task.FromResult((false, "Model with given id does not exist."));
+            var part = new Part
+            {
+                SerialNumber = request.SerialNumber,
+                ModelId = request.ModelId,
+                Model = model
+            };
+            if(model != null) model.Parts.Add(part);
+            await _partRepository.AddPartAsync(part);
+            return await Task.FromResult((true, "Part successfully created."));  
         }
         public async Task<(bool Confirmed, string Response)> UpdatePartAsync(UpdatePartDto request, int id)
         {
@@ -49,12 +50,12 @@ namespace EService.Services
                 {
                     model = await _modelRepository.GetModelByIdAsync(request.ModelId.Value);
                     if(model == null) return await Task.FromResult((false, "Model with given id does not exist."));
-                    part.Model.Parts.Remove(part);
+                    if(part.Model != null) part.Model.Parts.Remove(part);
                     part.ModelId = request.ModelId.Value;
                     part.Model = model;
                     model.Parts.Add(part);
                 }
-                if(request.SerialNumber != null) part.SerialNumber = request.SerialNumber.Value;
+                if(request.SerialNumber != null) part.SerialNumber = request.SerialNumber;
                 await _partRepository.SaveChangesAsync();
                 return await Task.FromResult((true, "Part successfully updated."));
             }

@@ -2,7 +2,7 @@
 {
     public class UpdatePartDto
     {
-        public int? SerialNumber { get; set; }
+        public string? SerialNumber { get; set; }
         public int? ModelId { get; set; }
     }
 }

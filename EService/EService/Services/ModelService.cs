@@ -41,7 +41,7 @@ namespace EService.Services
                     Parts = listOfParts
                 };
                 await _modelRepository.AddModelAsync(model);
-                model = await _modelRepository.GetModelByNameAsync(request.Name);
+                model = await _modelRepository.GetModelByIdAsync(model.Id);
                 foreach(var part in model!.Parts)
                 {
                     part.ModelId = model.Id;
@@ -50,7 +50,7 @@ namespace EService.Services
                 await _modelRepository.SaveChangesAsync();
                 return await Task.FromResult((true, "Model successfully created."));
             }
-            else return await Task.FromResult((false, "Such model already exists."));
+            else return await Task.FromResult((false, "Model with given name already exists."));
         }
         public async Task<(bool Confirmed, string Response)> UpdateModelAsync(UpdateModelDto request, int id)
         {

@@ -6,7 +6,7 @@ namespace EService.Repositories.Interfaces
     {
 
         public Task<Part?> GetPartByIdAsync(int id);
-        public Task<Part?> GetPartBySerialNumber(int serialNumber);
+        public Task<Part?> GetPartBySerialNumber(string serialNumber);
         public Task<List<Part>> GetAllPartsAsync();
         public Task AddPartAsync(Part Part);
         public Task RemovePartAsync(Part Part);

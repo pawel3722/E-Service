@@ -27,7 +27,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet, Authorize(Roles ="Serviceman")]
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
             var result = await _messageService.GetAllMessagesAsync();
@@ -36,8 +36,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpPost]
-        [Authorize]
+        [HttpPost, Authorize]
         public async Task<IActionResult> Create(CreateMessageDto request)
         {
             var result = await _messageService.CreateMessageAsync(request);
