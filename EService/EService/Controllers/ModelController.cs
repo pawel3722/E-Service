@@ -1,12 +1,14 @@
 ﻿using EService.Dtos.ModelDtos;
 using EService.Dtos.ServiceTypeDtos;
 using EService.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EService.Controllers
 {
     [Route("api/[controller]")]
+    
     [ApiController]
     public class ModelController : ControllerBase
     {

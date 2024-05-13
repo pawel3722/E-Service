@@ -1,6 +1,8 @@
 ﻿using EService.Dtos.MessageDtos;
 using EService.Dtos.PartDtos;
 using EService.Services;
+using Microsoft.AspNetCore.Cors;
+
 
 //using EService.Dtos.ServiceTypeDtos;
 //using EService.Services;
@@ -13,6 +15,7 @@ namespace EService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("_myAllowSpecificOrigins")]
     public class PartController : ControllerBase
     {
         private readonly IPartService _partService;
