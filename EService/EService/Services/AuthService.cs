@@ -1,5 +1,7 @@
 ﻿using EService.Dtos.AuthDtos;
+using EService.Dtos.RolesDtos;
 using EService.Models;
+using EService.Repositories;
 using EService.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,11 +16,76 @@ namespace EService.Services
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IAuthRepository repository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IAuthRepository authRepository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _authRepository = repository;
+            _authRepository = authRepository;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+        }
+        public async Task<List<ApplicationUser>> GetAllUsersAsync()
+        {
+            return await _authRepository.GetAllUsersAsync();
+        }
+        public async Task<List<Role>> GetAllRolesAsync()
+        {
+            return await _authRepository.GetAllRolesAsync();
+        }
+        public async Task<ApplicationUser?> GetUserAsync(int id)
+        {
+            return await _authRepository.GetUserByIdAsync(id);
+        }
+        public async Task<Role?> GetRoleAsync(int id)
+        {
+            return await _authRepository.GetRoleByIdAsync(id);
+        }
+        public async Task<(bool Confirmed, string Response)> AddUserRolesAsync(UpdateRolesDto request, int id)
+        {
+            var user = await _authRepository.GetUserByIdAsync(id);
+            if (user != null)
+            {
+                List<Role> roles = new List<Role>();
+                foreach (var roleName in request.RoleNames)
+                {
+                    var role = await _authRepository.GetRoleByNameAsync(roleName);
+                    if (role == null) return await Task.FromResult((false, "Role with given name does not exist."));
+                    user.Roles.Add(role);
+                    role.Users.Add(user);
+                }
+                await _authRepository.SaveChangesAsync();
+                return await Task.FromResult((true, "User's roles successfully added."));
+            }
+            else return await Task.FromResult((false, "User with given id does not exist."));
+        }
+        public async Task<(bool Confirmed, string Response)> RemoveUserRolesAsync(UpdateRolesDto request, int id)
+        {
+            var user = await _authRepository.GetUserByIdAsync(id);
+            if (user != null)
+            {
+                List<Role> roles = new List<Role>();
+                foreach (var roleName in request.RoleNames)
+                {
+                    var role = await _authRepository.GetRoleByNameAsync(roleName);
+                    if (role == null) return await Task.FromResult((false, "Role with given name does not exist."));
+                    if (user.Roles.Contains(role)) user.Roles.Remove(role);
+                    else return await Task.FromResult((false, "Role is not performed by this user."));
+                    if (role.Users.Contains(user)) role.Users.Remove(user);
+                    else return await Task.FromResult((false, "User does not perform this role."));
+                }
+                await _authRepository.SaveChangesAsync();
+                return await Task.FromResult((true, "User's roles successfully removed."));
+            }
+            else return await Task.FromResult((false, "User with given id does not exist."));
+        }
+
+        public async Task<(bool Confirmed, string Response)> DeleteUserAsync(int id)
+        {
+            var user = await _authRepository.GetUserByIdAsync(id);
+            if (user != null)
+            {
+                await _authRepository.RemoveUserAsync(user);
+                return await Task.FromResult((true, "User successfully deleted."));
+            }
+            else return await Task.FromResult((false, "User with given id does not exist."));
         }
 
         public async Task<(bool Confirmed, string Response)> RegisterUserAsync(UserRegisterRequestDto request)

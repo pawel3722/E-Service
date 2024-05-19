@@ -10,14 +10,14 @@ namespace EService.Services
         private readonly IOrderRepository _orderRepository;
         private readonly IServiceTypeRepository _serviceTypeRepository;
         private readonly IPartRepository _partRepository;
-        private readonly IApplicationUserRepository _applicationUserRepository;
-        public ServiceService(IServiceRepository serviceRepository, IOrderRepository orderRepository, IServiceTypeRepository serviceTypeRepository, IPartRepository partRepository, IApplicationUserRepository applicationUserRepository)
+        private readonly IAuthRepository _authRepository;
+        public ServiceService(IServiceRepository serviceRepository, IOrderRepository orderRepository, IServiceTypeRepository serviceTypeRepository, IPartRepository partRepository, IAuthRepository authRepository)
         {
             _serviceRepository = serviceRepository;
             _orderRepository = orderRepository;
             _serviceTypeRepository = serviceTypeRepository;
             _partRepository = partRepository;
-            _applicationUserRepository = applicationUserRepository;
+            _authRepository = authRepository;
         }
         public async Task<Service?> GetService(int id)
         {
@@ -71,7 +71,7 @@ namespace EService.Services
                 Part? part = null;
                 if (request.ServicemanId != null)
                 {
-                    serviceman = await _applicationUserRepository.GetUserByIdAsync(request.ServicemanId.Value);
+                    serviceman = await _authRepository.GetUserByIdAsync(request.ServicemanId.Value);
                     if (serviceman == null) return await Task.FromResult((false, "Serviceman with given id does not exist."));
                     if (service.Serviceman != null) service.Serviceman.Services.Remove(service);
                     service.ServicemanId = request.ServicemanId;

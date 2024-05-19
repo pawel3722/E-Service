@@ -9,13 +9,13 @@ namespace EService.Services
     public class OrderService : IOrderService
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IAuthRepository _authRepository;
         private readonly IServiceTypeRepository _serviceTypeRepository;
         private readonly IPartRepository _partRepository;
-        public OrderService(IOrderRepository orderRepository, IApplicationUserRepository applicationUserRepository, IServiceTypeRepository serviceTypeRepository, IPartRepository partRepository)
+        public OrderService(IOrderRepository orderRepository, IAuthRepository authRepository, IServiceTypeRepository serviceTypeRepository, IPartRepository partRepository)
         {
             _orderRepository = orderRepository;
-            _applicationUserRepository = applicationUserRepository;
+            _authRepository = authRepository;
             _serviceTypeRepository = serviceTypeRepository;
             _partRepository = partRepository;
         }
@@ -30,12 +30,12 @@ namespace EService.Services
         }
         public async Task<(bool Confirmed, string Response)> CreateOrderAsync(CreateOrderDto request)
         {
-            var customer = await _applicationUserRepository.GetUserByIdAsync(request.CustomerId);
+            var customer = await _authRepository.GetUserByIdAsync(request.CustomerId);
             if(customer != null)
             {
                 ApplicationUser? manager = null;
                 if(request.ManagerId != null)
-                    manager = await _applicationUserRepository.GetUserByIdAsync(request.ManagerId.Value);
+                    manager = await _authRepository.GetUserByIdAsync(request.ManagerId.Value);
                 var listOfServices = new List<Service>();
                 foreach(var serviceDto in request.Services)
                 {
@@ -94,7 +94,7 @@ namespace EService.Services
                 ApplicationUser? manager = null;
                 if(request.CustomerId != null)
                 {
-                    customer = await _applicationUserRepository.GetUserByIdAsync(request.CustomerId.Value);
+                    customer = await _authRepository.GetUserByIdAsync(request.CustomerId.Value);
                     if(customer == null) return await Task.FromResult((false, "Customer with given id does not exist."));
                     order.Customer.CustomerOrders.Remove(order);
                     order.CustomerId = request.CustomerId.Value;
@@ -102,7 +102,7 @@ namespace EService.Services
                 }
                 if(request.ManagerId != null)
                 {
-                    manager = await _applicationUserRepository.GetUserByIdAsync(request.ManagerId.Value);
+                    manager = await _authRepository.GetUserByIdAsync(request.ManagerId.Value);
                     if(manager == null) return await Task.FromResult((false, "Manager with given id does not exist."));
                     if(order.Manager != null) order.Manager.ManagerOrders.Remove(order);
                     order.ManagerId = request.ManagerId.Value;

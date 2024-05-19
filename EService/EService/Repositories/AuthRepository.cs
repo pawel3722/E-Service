@@ -13,11 +13,25 @@ namespace EService.Repositories
             _context = context;
         }
 
+        public async Task<Role?> GetRoleByIdAsync(int id)
+        {
+            return await Task.Run(() => _context.Roles.Where(r => r.Id == id).FirstOrDefaultAsync());
+        }
+        public async Task<Role?> GetRoleByNameAsync(string name)
+        {
+            return await Task.Run(() => _context.Roles.Where(r => r.Name == name).FirstOrDefaultAsync());
+        }
         public async Task<ApplicationUser?> GetUserByIdAsync(int id)
         {
             return await Task.Run(() => _context.Users.Where(u => u.Id == id).
             Include(u => u.Roles).
             FirstOrDefaultAsync());
+        }
+        public async Task<List<ApplicationUser>> GetAllUsersAsync()
+        {
+            return await Task.Run(() => _context.Users.
+            Include(m => m.Roles).
+            ToListAsync());
         }
         public async Task<ApplicationUser?> GetUserByEmailAsync(string email)
         {
@@ -30,6 +44,10 @@ namespace EService.Repositories
             return await Task.Run(() => _context.Users.Where(u => u.RefreshToken == refreshToken).
             Include(u => u.Roles).
             FirstOrDefaultAsync());
+        }
+        public async Task<List<Role>> GetAllRolesAsync()
+        {
+            return await Task.Run(() => _context.Roles.ToListAsync());
         }
         public async Task<Role?> GetRoleAsync(string name)
         {
@@ -47,6 +65,11 @@ namespace EService.Repositories
         public async Task AddRoleAsync(Role role)
         {
             await _context.Roles.AddAsync(role);
+            await SaveChangesAsync();
+        }
+        public async Task RemoveUserAsync(ApplicationUser user)
+        {
+            _context.Remove(user);
             await SaveChangesAsync();
         }
         public async Task SaveChangesAsync()
