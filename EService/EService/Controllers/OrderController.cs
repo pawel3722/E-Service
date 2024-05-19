@@ -19,7 +19,6 @@ namespace EService.Controllers
         }
 
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {

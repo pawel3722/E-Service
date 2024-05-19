@@ -120,7 +120,7 @@ namespace EService.Services
                 var message = await _messageRepository.GetMessageByIdAsync(id);
                 if (message != null)
                 {
-                    if(message.SendingUserId != sendingUser.Id)
+                    if(message.SendingUserId == sendingUser.Id)
                     {
                         if (request.Text != null) message.Text = request.Text!;
                         if (request.SendingDate != null) message.SendingDate = request.SendingDate.Value;
@@ -153,7 +153,7 @@ namespace EService.Services
                 var message = await _messageRepository.GetMessageByIdAsync(id);
                 if (message != null)
                 {
-                    if (message.SendingUserId != sendingUser.Id)
+                    if (message.SendingUserId == sendingUser.Id)
                     {
                         await _messageRepository.RemoveMessageAsync(message);
                         return await Task.FromResult((true, "Message successfully deleted."));

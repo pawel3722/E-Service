@@ -48,7 +48,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpGet("users/{id}"), Authorize(Roles = "Admin")]
+        [HttpGet("admin/users/{id}"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUser(int id)
         {
             var result = await _authService.GetUserAsync(id);
@@ -69,7 +69,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet("users"), Authorize(Roles = "Admin")]
+        [HttpGet("admin/users"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetUsers()
         {
             var result = await _authService.GetAllUsersAsync();
@@ -79,7 +79,7 @@ namespace EService.Controllers
             }
             return NotFound();
         }
-        [HttpGet("roles/{id}"), Authorize(Roles = "Admin")]
+        [HttpGet("admin/roles/{id}"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetRole(int id)
         {
             var result = await _authService.GetRoleAsync(id);
@@ -90,7 +90,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet("roles"), Authorize(Roles = "Admin")]
+        [HttpGet("admin/roles"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetRoles()
         {
             var result = await _authService.GetAllRolesAsync();
@@ -101,7 +101,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpPost("users/{id}/roles"), Authorize(Roles = "Admin")]
+        [HttpPost("admin/users/{id}/roles"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddRoles(UpdateRolesDto request, int id)
         {
             var result = await _authService.AddUserRolesAsync(request, id);
@@ -110,7 +110,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpDelete("users/{id}/roles"), Authorize(Roles = "Admin")]
+        [HttpDelete("admin/users/{id}/roles"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteRoles(UpdateRolesDto request, int id)
         {
             var result = await _authService.RemoveUserRolesAsync(request, id);
@@ -119,7 +119,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpDelete("users/{id}"), Authorize(Roles = "Admin")]
+        [HttpDelete("admin/users/{id}"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var result = await _authService.DeleteUserAsync(id);
