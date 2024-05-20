@@ -1,0 +1,65 @@
+.app_logo {
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 20px;
+    height: 40px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 0px 20px rgb(1, 3, 107);
+    padding: 8px 20px 8px 20px;
+    /* border-radius: 10px; */
+    background-color: rgb(1, 3, 107);
+    position: sticky;
+    top: 0;
+}
+
+nav ul {
+    list-style: none;
+    /* background-color: cornflowerblue; */
+    /* border: solid cornflowerblue; */
+    border-radius: 50vh;
+    display: flex;
+    align-items: center;
+    padding: 0px;
+    margin:auto;
+}
+
+li {
+    margin: 0px 50px 0px 50px;
+    text-decoration: none;
+}
+
+.options {
+    text-decoration: none;
+    color: white;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 50vh;
+}
+
+.options:hover {
+    background-color: white;
+    color: rgb(1, 3, 107);
+}
+
+.log_link {
+    text-decoration: none;
+    background-color: rgb(6, 184, 169);
+    border: 2px solid rgb(6, 184, 169);
+    padding: 10px 20px;
+    border-radius: 50vh;
+    justify-content: center;
+    color: aliceblue;
+    font-weight: 1000;
+    font-size: 1.3em;
+}
+
+.log_link:hover {
+    color: rgb(6, 184, 169);
+    background-color: aliceblue;
+}

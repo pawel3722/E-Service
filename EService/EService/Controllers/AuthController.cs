@@ -1,13 +1,16 @@
 ﻿using EService.Dtos.AuthDtos;
 using EService.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EService.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("_myAllowSpecificOrigins")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
