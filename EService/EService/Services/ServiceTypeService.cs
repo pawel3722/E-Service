@@ -31,7 +31,8 @@ namespace EService.Services
                     {
                         Name = request.Name,
                         MinPrice = request.MinPrice,
-                        MaxPrice = request.MaxPrice
+                        MaxPrice = request.MaxPrice,
+                        DeviceType = request.DeviceType
                     };
                     await _serviceTypeRepository.AddServiceTypeAsync(serviceType);
                     return await Task.FromResult((true, "Service type successfully created."));
@@ -50,6 +51,7 @@ namespace EService.Services
                     if(request.Name != null) serviceType.Name = request.Name;
                     if (request.MinPrice != null) serviceType.MinPrice = request.MinPrice.Value;
                     if (request.MaxPrice != null) serviceType.MaxPrice = request.MaxPrice.Value;
+                    if (request.DeviceType != null) serviceType.DeviceType = request.DeviceType;
                     await _serviceTypeRepository.SaveChangesAsync();
                     return await Task.FromResult((true, "Service type successfully updated."));
                 }

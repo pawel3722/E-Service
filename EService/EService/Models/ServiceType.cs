@@ -9,6 +9,7 @@ namespace EService.Models
         public string Name { get; set; }
         public double MinPrice { get; set; }
         public double MaxPrice { get; set; }
+        public string DeviceType { get; set; }
         public List<Service> Services { get; set; } = new List<Service>();
         public ServiceType() { }
     }

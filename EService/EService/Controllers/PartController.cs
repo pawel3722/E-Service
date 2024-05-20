@@ -1,14 +1,7 @@
-﻿using EService.Dtos.MessageDtos;
-using EService.Dtos.PartDtos;
+﻿using EService.Dtos.PartDtos;
 using EService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
-
-
-//using EService.Dtos.ServiceTypeDtos;
-//using EService.Services;
-
-
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EService.Controllers
@@ -25,7 +18,7 @@ namespace EService.Controllers
             _partService = service;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Get(int id)
         {
             var result = await _partService.GetPartAsync(id);
@@ -36,7 +29,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Get()
         {
             var result = await _partService.GetAllPartsAsync();
@@ -47,7 +40,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create(CreatePartDto request)
         {
             var result = await _partService.CreatePartAsync(request);
@@ -56,7 +49,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Update(UpdatePartDto request, int id)
         {
             var result = await _partService.UpdatePartAsync(request, id);
@@ -65,7 +58,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _partService.DeletePartAsync(id);

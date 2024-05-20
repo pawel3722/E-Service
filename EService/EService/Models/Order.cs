@@ -7,6 +7,12 @@ namespace EService.Models
     {
         public int Id { get; set; }
         public DateTime Date { get; set; }
+        // 0 -> Przyjęto do realizacji 
+        // 1 -> Przypisano menadżera
+        // 2 -> Ukończono ekspertyzę
+        // 3 -> Zlecono wykonanie działań
+        // 4 -> Naprawiono
+        // 5 -> Odebrano
         public int Status { get; set; }
         public bool Paid { get; set; }
 

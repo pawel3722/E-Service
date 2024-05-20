@@ -6,10 +6,12 @@ namespace EService.Dtos.ServiceTypeDtos
     public class CreateServiceTypeDto
     {
         [Required]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
         [Required, Range(0, double.MaxValue)]
-        public double MinPrice { get; set; } = 0.0;
+        public double MinPrice { get; set; }
         [Required, Range(0, double.MaxValue)]
-        public double MaxPrice { get; set; } = 0.0;
+        public double MaxPrice { get; set; }
+        [Required]
+        public string DeviceType { get; set; }
     }
 }

@@ -3,6 +3,10 @@
     public class Service
     {
         public int Id { get; set; }
+        // 0 -> Utworzono
+        // 1 -> Przypisano pracownika
+        // 2 -> (awaryjnie) Oczekiwanie na część
+        // 3 -> Ukończono
         public int Status { get; set; }
         public DateTime? Guarantee { get; set; }
         public DateTime? Date { get; set; }
