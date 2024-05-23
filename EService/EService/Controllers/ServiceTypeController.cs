@@ -21,9 +21,7 @@ namespace EService.Controllers
         {
             var result = await _serviceTypeService.GetServiceTypeAsync(id);
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
@@ -32,9 +30,7 @@ namespace EService.Controllers
         {
             var result = await _serviceTypeService.GetAllServiceTypesAsync();
             if(result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 

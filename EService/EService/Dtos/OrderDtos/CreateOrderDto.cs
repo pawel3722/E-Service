@@ -7,7 +7,6 @@ namespace EService.Dtos.OrderDtos
     public class CreateOrderDto
     {
         public DateTime Date { get; set; } = DateTime.Now;
-        public int Status { get; set; } = 0;
         [Required]
         public bool Paid { get; set; }
         [Required]

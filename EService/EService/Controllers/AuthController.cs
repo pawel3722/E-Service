@@ -53,9 +53,7 @@ namespace EService.Controllers
         {
             var result = await _authService.GetUserAsync(id);
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
         [HttpGet("users/me"), Authorize]
@@ -63,9 +61,7 @@ namespace EService.Controllers
         {
             var result = await _authService.GetUserAsync(Int32.Parse(Request.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!));
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
@@ -74,9 +70,7 @@ namespace EService.Controllers
         {
             var result = await _authService.GetAllUsersAsync();
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
         [HttpGet("admin/roles/{id}"), Authorize(Roles = "Admin")]
@@ -84,9 +78,7 @@ namespace EService.Controllers
         {
             var result = await _authService.GetRoleAsync(id);
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
@@ -95,9 +87,7 @@ namespace EService.Controllers
         {
             var result = await _authService.GetAllRolesAsync();
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 

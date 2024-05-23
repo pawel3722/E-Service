@@ -23,9 +23,7 @@ namespace EService.Controllers
         {
             var result = await _partService.GetPartAsync(id);
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
@@ -34,9 +32,7 @@ namespace EService.Controllers
         {
             var result = await _partService.GetAllPartsAsync();
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 

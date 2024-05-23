@@ -22,9 +22,7 @@ namespace EService.Controllers
         {
             var result = await _modelService.GetModelAsync(id);
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
@@ -33,9 +31,7 @@ namespace EService.Controllers
         {
             var result = await _modelService.GetAllModelsAsync();
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
