@@ -1,5 +1,7 @@
 ﻿using EService.Dtos.AuthDtos;
+using EService.Dtos.RolesDtos;
 using EService.Models;
+using EService.Repositories;
 using EService.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,87 +16,128 @@ namespace EService.Services
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(IAuthRepository repository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IAuthRepository authRepository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
-            _authRepository = repository;
+            _authRepository = authRepository;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+        }
+        public async Task<List<ApplicationUser>> GetAllUsersAsync()
+        {
+            return await _authRepository.GetAllUsersAsync();
+        }
+        public async Task<List<Role>> GetAllRolesAsync()
+        {
+            return await _authRepository.GetAllRolesAsync();
+        }
+        public async Task<ApplicationUser?> GetUserAsync(int id)
+        {
+            return await _authRepository.GetUserByIdAsync(id);
+        }
+        public async Task<Role?> GetRoleAsync(int id)
+        {
+            return await _authRepository.GetRoleByIdAsync(id);
+        }
+        public async Task<(bool Confirmed, string Response)> AddUserRolesAsync(UpdateRolesDto request, int id)
+        {
+            var user = await _authRepository.GetUserByIdAsync(id);
+            if (user == null) return await Task.FromResult((false, "User with given id does not exist."));
+            List<Role> roles = new List<Role>();
+            foreach (var roleName in request.RoleNames)
+            {
+                var role = await _authRepository.GetRoleByNameAsync(roleName);
+                if (role == null) return await Task.FromResult((false, "Role with given name does not exist."));
+                user.Roles.Add(role);
+                role.Users.Add(user);
+            }
+            await _authRepository.SaveChangesAsync();
+            return await Task.FromResult((true, "User's roles successfully added."));
+        }
+        public async Task<(bool Confirmed, string Response)> RemoveUserRolesAsync(UpdateRolesDto request, int id)
+        {
+            var user = await _authRepository.GetUserByIdAsync(id);
+            if (user == null) return await Task.FromResult((false, "User with given id does not exist."));
+            List<Role> roles = new List<Role>();
+            foreach (var roleName in request.RoleNames)
+            {
+                var role = await _authRepository.GetRoleByNameAsync(roleName);
+                if (role == null) return await Task.FromResult((false, "Role with given name does not exist."));
+                if (user.Roles.Contains(role)) user.Roles.Remove(role);
+                else return await Task.FromResult((false, "Role is not performed by this user."));
+                if (role.Users.Contains(user)) role.Users.Remove(user);
+                else return await Task.FromResult((false, "User does not perform this role."));
+            }
+            await _authRepository.SaveChangesAsync();
+            return await Task.FromResult((true, "User's roles successfully removed."));
+        }
+
+        public async Task<(bool Confirmed, string Response)> DeleteUserAsync(int id)
+        {
+            var user = await _authRepository.GetUserByIdAsync(id);
+            if (user == null) return await Task.FromResult((false, "User with given id does not exist."));
+            await _authRepository.RemoveUserAsync(user);
+            return await Task.FromResult((true, "User successfully deleted."));
         }
 
         public async Task<(bool Confirmed, string Response)> RegisterUserAsync(UserRegisterRequestDto request)
         {
-            if (!await _authRepository.UserExistsAsync(request.Email))
+            if (await _authRepository.UserExistsAsync(request.Email)) return await Task.FromResult((false, "User with specified email already exists."));
+            var role = await _authRepository.GetRoleAsync("Client");
+            if (role == null)
             {
-                var role = await _authRepository.GetRoleAsync("Client");
-                if (role == null)
-                {
-                    role = new Role() { Name = "Client" };
-                    await _authRepository.AddRoleAsync(role);
-                }
-                CreatePasswordHash(request.Password, out byte[] PasswordHash, out byte[] PasswordSalt);
-                var newUser = new ApplicationUser
-                {
-                    Name = request.Name,
-                    Surname = request.Surname,
-                    Email = request.Email,
-                    PasswordHash = PasswordHash,
-                    PasswordSalt = PasswordSalt,
-                    Roles = new List<Role> { role! }
-                };
-                role!.Users.Add(newUser);
-                await _authRepository.AddUserAsync(newUser);
-                return await Task.FromResult((true, "User has been succesfully created."));
+                role = new Role() { Name = "Client" };
+                await _authRepository.AddRoleAsync(role);
             }
-            else return await Task.FromResult((false, "User with specified email already exists."));
+            CreatePasswordHash(request.Password, out byte[] PasswordHash, out byte[] PasswordSalt);
+            var newUser = new ApplicationUser
+            {
+                Name = request.Name,
+                Surname = request.Surname,
+                Email = request.Email,
+                PasswordHash = PasswordHash,
+                PasswordSalt = PasswordSalt,
+                Roles = new List<Role> { role! }
+            };
+            role!.Users.Add(newUser);
+            await _authRepository.AddUserAsync(newUser);
+            return await Task.FromResult((true, "User has been succesfully created."));
         }
         public async Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> LoginUserAsync(UserLoginRequestDto request)
         {
             var user = await _authRepository.GetUserByEmailAsync(request.Email);
-            if (user != null)
+            if (user == null) return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Incorrect email or password.", null));
+            if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt)) return await Task.FromResult<(bool, string, TokensResponseDto?)>((false, "Incorrect email or password.", null));
+            var jwtToken = CreateJwtToken(user);
+            var refreshToken = GenerateRefreshToken();
+            var tokens = new TokensResponseDto
             {
-                if (VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-                {
-                    var jwtToken = CreateJwtToken(user);
-                    var refreshToken = GenerateRefreshToken();
-                    var tokens = new TokensResponseDto
-                    {
-                        JwtToken = jwtToken,
-                        RefreshToken = refreshToken.Token,
-                        CreatedAt = refreshToken.CreatedAt,
-                        Expires = refreshToken.Expires
-                    };
-                    SetRefreshTokenInResponse(refreshToken);
-                    await SetRefreshTokenForUserAsync(refreshToken, user);
-                    return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome, {user.Name}.", tokens));
-                }
-                else return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Incorrect email or password.", null));
-            }
-            else return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Incorrect email or password.", null));
+                JwtToken = jwtToken,
+                RefreshToken = refreshToken.Token,
+                CreatedAt = refreshToken.CreatedAt,
+                Expires = refreshToken.Expires
+            };
+            SetRefreshTokenInResponse(refreshToken);
+            await SetRefreshTokenForUserAsync(refreshToken, user);
+            return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome, {user.Name}.", tokens));
         }
         public async Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> RefreshTokenAsync()
         {
             var refreshToken = _httpContextAccessor.HttpContext!.Request.Cookies["refreshToken"];
             var user = await _authRepository.GetUserByRefreshTokenAsync(refreshToken!);
-            if (user != null)
+            if (user == null) return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Invalid refresh token.", null));
+            if (user.TokenExpires < DateTime.Now) return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Token expired.", null));
+            var jwtToken = CreateJwtToken(user);
+            var newRefreshToken = GenerateRefreshToken();
+            var tokens = new TokensResponseDto
             {
-                if (user.TokenExpires > DateTime.Now)
-                {
-                    var jwtToken = CreateJwtToken(user);
-                    var newRefreshToken = GenerateRefreshToken();
-                    var tokens = new TokensResponseDto
-                    {
-                        JwtToken = jwtToken,
-                        RefreshToken = newRefreshToken.Token,
-                        CreatedAt = newRefreshToken.CreatedAt,
-                        Expires = newRefreshToken.Expires
-                    };
-                    SetRefreshTokenInResponse(newRefreshToken);
-                    await SetRefreshTokenForUserAsync(newRefreshToken, user);
-                    return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome {user.Name}.", tokens));
-                }
-                else return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Token expired.", null));
-            }
-            else return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Invalid refresh token.", null));
+                JwtToken = jwtToken,
+                RefreshToken = newRefreshToken.Token,
+                CreatedAt = newRefreshToken.CreatedAt,
+                Expires = newRefreshToken.Expires
+            };
+            SetRefreshTokenInResponse(newRefreshToken);
+            await SetRefreshTokenForUserAsync(newRefreshToken, user);
+            return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome {user.Name}.", tokens));
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

@@ -7,5 +7,6 @@ namespace EService.Dtos.ServiceTypeDtos
         public string? Name { get; set; }
         public double? MinPrice { get; set; }
         public double? MaxPrice { get; set; }
+        public string? DeviceType { get; set; }
     }
 }

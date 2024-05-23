@@ -24,6 +24,30 @@ namespace EService.Repositories
             Include(m => m.SendingUser).
             ToListAsync());
         }
+        public async Task<List<Message>> GetAllMessagesSentByToAsync(int senderId, int receiverId)
+        {
+            return await Task.Run(() => _context.Messages.
+            Where(m => m.SendingUserId == senderId && m.ReceivingUserId == receiverId).
+            Include(m => m.ReceivingUser).
+            Include(m => m.SendingUser).
+            ToListAsync());
+        }
+        public async Task<List<Message>> GetAllMessagesSentByAsync(int senderId)
+        {
+            return await Task.Run(() => _context.Messages.
+            Where(m => m.SendingUserId == senderId).
+            Include(m => m.ReceivingUser).
+            Include(m => m.SendingUser).
+            ToListAsync());
+        }
+        public async Task<List<Message>> GetAllMessagesSentToAsync(int receiverId)
+        {
+            return await Task.Run(() => _context.Messages.
+            Where(m => m.ReceivingUserId == receiverId).
+            Include(m => m.ReceivingUser).
+            Include(m => m.SendingUser).
+            ToListAsync());
+        }
         public async Task AddMessageAsync(Message message)
         {
             await _context.AddAsync(message);

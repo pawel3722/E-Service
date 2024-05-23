@@ -1,8 +1,6 @@
 ﻿using EService.Dtos.ModelDtos;
-using EService.Dtos.ServiceTypeDtos;
 using EService.Services;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EService.Controllers
@@ -19,29 +17,25 @@ namespace EService.Controllers
             _modelService = service;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Get(int id)
         {
             var result = await _modelService.GetModelAsync(id);
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Get()
         {
             var result = await _modelService.GetAllModelsAsync();
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create(CreateModelDto request)
         {
             var result = await _modelService.CreateModelAsync(request);
@@ -50,7 +44,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Update(UpdateModelDto request, int id)
         {
             var result = await _modelService.UpdateModelAsync(request, id);
@@ -59,7 +53,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _modelService.DeleteModelAsync(id);

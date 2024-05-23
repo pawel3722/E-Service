@@ -5,7 +5,6 @@ namespace EService.Dtos.ServiceDtos
 {
     public class CreateServiceDto
     {
-        public int Status { get; set; } = 0;
         [Required]
         public double ServicePrice { get; set; }
         [Required]

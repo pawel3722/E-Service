@@ -23,58 +23,48 @@ namespace EService.Services
         public async Task<(bool Confirmed, string Response)> CreateModelAsync(CreateModelDto request)
         {
             var model = await _modelRepository.GetModelByNameAsync(request.Name);
-            if (model == null)
+            if (model != null) return await Task.FromResult((false, "Model with given name already exists."));
+            var listOfParts = new List<Part>();
+            foreach(var partDto in request.Parts)
             {
-                var listOfParts = new List<Part>();
-                foreach(var partDto in request.Parts)
+                listOfParts.Add(new Part()
                 {
-                    listOfParts.Add(new Part()
-                    {
-                        SerialNumber = partDto.SerialNumber
-                    });
-                }
-                model = new Model
-                {
-                    Name = request.Name,
-                    Type = request.Type,
-                    Price = request.Price,
-                    Parts = listOfParts
-                };
-                await _modelRepository.AddModelAsync(model);
-                model = await _modelRepository.GetModelByIdAsync(model.Id);
-                foreach(var part in model!.Parts)
-                {
-                    part.ModelId = model.Id;
-                    part.Model = model;
-                }
-                await _modelRepository.SaveChangesAsync();
-                return await Task.FromResult((true, "Model successfully created."));
+                    SerialNumber = partDto.SerialNumber
+                });
             }
-            else return await Task.FromResult((false, "Model with given name already exists."));
+            model = new Model
+            {
+                Name = request.Name,
+                Type = request.Type,
+                Price = request.Price,
+                Parts = listOfParts
+            };
+            await _modelRepository.AddModelAsync(model);
+            model = await _modelRepository.GetModelByIdAsync(model.Id);
+            foreach(var part in model!.Parts)
+            {
+                part.ModelId = model.Id;
+                part.Model = model;
+            }
+            await _modelRepository.SaveChangesAsync();
+            return await Task.FromResult((true, "Model successfully created."));
         }
         public async Task<(bool Confirmed, string Response)> UpdateModelAsync(UpdateModelDto request, int id)
         {
             var model = await _modelRepository.GetModelByIdAsync(id);
-            if (model != null)
-            {
-                if (request.Name != null) model.Name = request.Name!;
-                if (request.Type != null) model.Type = request.Type!;
-                if (request.Price != null) model.Price = request.Price.Value;
-                await _modelRepository.SaveChangesAsync();
-                return await Task.FromResult((true, "Model successfully updated."));
-            }
-            else return await Task.FromResult((false, "Model with given id does not exist."));
+            if (model == null) return await Task.FromResult((false, "Model with given id does not exist."));
+            if (request.Name != null) model.Name = request.Name!;
+            if (request.Type != null) model.Type = request.Type!;
+            if (request.Price != null) model.Price = request.Price.Value;
+            await _modelRepository.SaveChangesAsync();
+            return await Task.FromResult((true, "Model successfully updated."));
         }
-
         public async Task<(bool Confirmed, string Response)> DeleteModelAsync(int id)
         {
             var model = await _modelRepository.GetModelByIdAsync(id);
-            if (model != null)
-            {
-                await _modelRepository.RemoveModelAsync(model);
-                return await Task.FromResult((true, "Model successfully deleted."));
-            }
-            else return await Task.FromResult((false, "Model with given id does not exist."));
+            if (model == null) return await Task.FromResult((false, "Model with given id does not exist."));
+            await _modelRepository.RemoveModelAsync(model);
+            return await Task.FromResult((true, "Model successfully deleted."));
         }
     }
 }

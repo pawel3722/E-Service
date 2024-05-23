@@ -1,9 +1,7 @@
-﻿using Azure.Core;
-using EService.Dtos.ServiceTypeDtos;
+﻿using EService.Dtos.ServiceTypeDtos;
 using EService.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EService.Controllers
 {
@@ -23,9 +21,7 @@ namespace EService.Controllers
         {
             var result = await _serviceTypeService.GetServiceTypeAsync(id);
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
@@ -34,13 +30,11 @@ namespace EService.Controllers
         {
             var result = await _serviceTypeService.GetAllServiceTypesAsync();
             if(result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Create(CreateServiceTypeDto request)
         {
             var result = await _serviceTypeService.CreateServiceTypeAsync(request);
@@ -49,7 +43,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}"), Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Update(UpdateServiceTypeDto request, int id)
         {
             var result = await _serviceTypeService.UpdateServiceTypeAsync(request, id);
@@ -58,7 +52,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _serviceTypeService.DeleteServiceTypeAsync(id);
