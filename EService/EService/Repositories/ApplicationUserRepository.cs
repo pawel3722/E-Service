@@ -2,6 +2,7 @@
 using EService.Models;
 using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace EService.Repositories
 {
@@ -15,23 +16,63 @@ namespace EService.Repositories
 
         public async Task<Role?> GetRoleByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Roles.Where(r => r.Id == id).FirstOrDefaultAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            Role? role = null;
+            try
+            {
+                role = await _context.Roles.Where(r => r.Id == id).FirstOrDefaultAsync();
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => role);
         }
         public async Task<Role?> GetRoleByNameAsync(string name)
         {
-            return await Task.Run(() => _context.Roles.Where(r => r.Name == name).FirstOrDefaultAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            Role? role = null;
+            try
+            {
+                role = await _context.Roles.Where(r => r.Name == name).FirstOrDefaultAsync();
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => role);
         }
         public async Task<ApplicationUser?> GetUserByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Users.Where(u => u.Id == id).
-            Include(u => u.Roles).
-            FirstOrDefaultAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            ApplicationUser? usr = null;
+            try
+            {
+                usr = await Task.Run(() => _context.Users.Where(u => u.Id == id).
+                                                           Include(u => u.Roles).
+                                                           FirstOrDefaultAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => usr);
         }
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
-            return await Task.Run(() => _context.Users.
-            Include(m => m.Roles).
-            ToListAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            List<ApplicationUser> arr = new List<ApplicationUser>();
+            try
+            {
+                arr = await Task.Run(() => _context.Users.
+                                                    Include(m => m.Roles).
+                                                    ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task AddUserAsync(ApplicationUser user)
         {

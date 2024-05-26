@@ -3,6 +3,7 @@ using EService.Models;
 using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using System.Transactions;
 
 namespace EService.Repositories
 {
@@ -16,15 +17,45 @@ namespace EService.Repositories
         }
         public async Task<ServiceType?> GetServiceTypeByNameAsync(string name)
         {
-            return await Task.Run(() => _context.ServiceTypes.Where(s => s.Name == name).FirstOrDefaultAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            ServiceType? servType = null;
+            try
+            {
+                servType = await Task.Run(() => _context.ServiceTypes.Where(s => s.Name == name).FirstOrDefaultAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => servType);
         }
         public async Task<ServiceType?> GetServiceTypeByIdAsync(int id)
         {
-            return await Task.Run(() => _context.ServiceTypes.FirstOrDefaultAsync(st => st.Id == id));
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            ServiceType? servType = null;
+            try
+            {
+                servType = await Task.Run(() => _context.ServiceTypes.FirstOrDefaultAsync(st => st.Id == id));
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => servType);
         }
         public async Task<List<ServiceType>> GetAllServiceTypesAsync()
         {
-            return await Task.Run(() => _context.ServiceTypes.ToListAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            List<ServiceType> arr = new List<ServiceType>();
+            try
+            {
+                arr = await Task.Run(() => _context.ServiceTypes.ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task AddServiceTypeAsync(ServiceType serviceType)
         {

@@ -2,6 +2,7 @@
 using EService.Models;
 using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace EService.Repositories
 {
@@ -15,13 +16,31 @@ namespace EService.Repositories
         }
         public async Task<Service?> GetServiceById(int id)
         {
-            return await Task.Run(() => _context.Services.FirstOrDefaultAsync(s => s.Id == id));
-
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            Service? serv = null;
+            try
+            {
+                serv = await Task.Run(() => _context.Services.FirstOrDefaultAsync(s => s.Id == id));
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => serv);
         }
         public async Task<List<Service>> GetAllServices()
         {
-            return await Task.Run(() => _context.Services.ToListAsync());
-
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            List<Service> arr = new List<Service>();
+            try
+            {
+                arr = await Task.Run(() => _context.Services.ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task AddServiceAsync(Service service)
         {
@@ -36,7 +55,6 @@ namespace EService.Repositories
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
-
         }
     }
 }

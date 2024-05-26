@@ -2,6 +2,7 @@
 using EService.Models;
 using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace EService.Repositories
 {
@@ -16,13 +17,31 @@ namespace EService.Repositories
 
         public async Task<Order?> GetOrderByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Orders.FirstOrDefaultAsync(o => o.Id == id));
-
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            Order? order = null;
+            try
+            {
+                order = await Task.Run(() => _context.Orders.FirstOrDefaultAsync(o => o.Id == id));
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => order);
         }
         public async Task<List<Order>> GetAllOrdersAsync()
         {
-            return await Task.Run(() => _context.Orders.ToListAsync());
-
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            List<Order> arr = new List<Order>();
+            try
+            {
+                arr = await Task.Run(() => _context.Orders.ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task AddOrderAsync(Order order)
         {

@@ -2,6 +2,7 @@
 using EService.Models;
 using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace EService.Repositories
 {
@@ -15,13 +16,31 @@ namespace EService.Repositories
         }
         public async Task<Review?> GetReviewByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Reviews.FirstOrDefaultAsync(r => r.Id == id));
-
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            Review? review = null;
+            try
+            {
+                review = await Task.Run(() => _context.Reviews.FirstOrDefaultAsync(r => r.Id == id));
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => review);
         }
         public async Task<List<Review>> GetAllReviewsAsync()
         {
-            return await Task.Run(() => _context.Reviews.ToListAsync());
-
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            List<Review> arr = new List<Review>();
+            try
+            {
+                arr = await Task.Run(() => _context.Reviews.ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task AddReviewAsync(Review review)
         {
@@ -36,7 +55,6 @@ namespace EService.Repositories
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
-
         }
     }
 }
