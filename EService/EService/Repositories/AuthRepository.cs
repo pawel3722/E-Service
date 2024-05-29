@@ -15,22 +15,29 @@ namespace EService.Repositories
 
         public async Task<Role?> GetRoleByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Roles.Where(r => r.Id == id).FirstOrDefaultAsync());
+            return await Task.Run(() => _context.Roles.Where(r => r.Id == id).
+            FirstOrDefaultAsync());
         }
         public async Task<Role?> GetRoleByNameAsync(string name)
         {
-            return await Task.Run(() => _context.Roles.Where(r => r.Name == name).FirstOrDefaultAsync());
+            return await Task.Run(() => _context.Roles.Where(r => r.Name == name).
+            FirstOrDefaultAsync());
         }
         public async Task<ApplicationUser?> GetUserByIdAsync(int id)
         {
             return await Task.Run(() => _context.Users.Where(u => u.Id == id).
             Include(u => u.Roles).
+            Include(u => u.SentMessages).
+            Include(u => u.ReceivedMessages).
+            Include(u => u.CustomerOrders).
+            Include(u => u.ManagerOrders).
+            Include(u => u.Services).
             FirstOrDefaultAsync());
         }
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
             return await Task.Run(() => _context.Users.
-            Include(m => m.Roles).
+            Include(u => u.Roles).
             ToListAsync());
         }
         public async Task<ApplicationUser?> GetUserByEmailAsync(string email)
@@ -47,11 +54,8 @@ namespace EService.Repositories
         }
         public async Task<List<Role>> GetAllRolesAsync()
         {
-            return await Task.Run(() => _context.Roles.ToListAsync());
-        }
-        public async Task<Role?> GetRoleAsync(string name)
-        {
-            return await Task.Run(() => _context.Roles.FirstOrDefaultAsync(r => r.Name == name));
+            return await Task.Run(() => _context.Roles.
+            ToListAsync());
         }
         public async Task<bool> UserExistsAsync(string email)
         {

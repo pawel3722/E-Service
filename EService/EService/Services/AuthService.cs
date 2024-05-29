@@ -82,7 +82,7 @@ namespace EService.Services
         public async Task<(bool Confirmed, string Response)> RegisterUserAsync(UserRegisterRequestDto request)
         {
             if (await _authRepository.UserExistsAsync(request.Email)) return await Task.FromResult((false, "User with specified email already exists."));
-            var role = await _authRepository.GetRoleAsync("Client");
+            var role = await _authRepository.GetRoleByNameAsync("Client");
             if (role == null)
             {
                 role = new Role() { Name = "Client" };

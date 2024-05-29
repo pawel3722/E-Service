@@ -28,9 +28,9 @@ namespace EService.Models
         public List<Message> SentMessages { get; set; } = new List<Message>();
         [InverseProperty("ReceivingUser"), JsonIgnore]
         public List<Message> ReceivedMessages { get; set; } = new List<Message>();
-        [InverseProperty("Customer")]
+        [InverseProperty("Customer"), JsonIgnore]
         public List<Order> CustomerOrders { get; set; } = new List<Order>();
-        [InverseProperty("Manager")]
+        [InverseProperty("Manager"), JsonIgnore]
         public List<Order> ManagerOrders { get; set; } = new List<Order>();
         public List<Service> Services { get; set; } = new List<Service>();
 

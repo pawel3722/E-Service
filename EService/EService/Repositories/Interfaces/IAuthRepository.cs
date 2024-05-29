@@ -11,7 +11,6 @@ namespace EService.Repositories.Interfaces
         public Task<ApplicationUser?> GetUserByEmailAsync(string email);
         public Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken);
         public Task<List<Role>> GetAllRolesAsync();
-        public Task<Role?> GetRoleAsync(string name);
         public Task<bool> UserExistsAsync(string email);
         public Task AddUserAsync(ApplicationUser user);
         public Task AddRoleAsync(Role role);
