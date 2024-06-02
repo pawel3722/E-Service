@@ -52,7 +52,6 @@ namespace EService.Services
                 if(part.Model != null) part.Model.Parts.Remove(part);
                 part.ModelId = request.ModelId.Value;
                 part.Model = model;
-                model.Parts.Add(part);
             }
             if(request.SerialNumber != null) part.SerialNumber = request.SerialNumber;
             await _partRepository.SaveChangesAsync();

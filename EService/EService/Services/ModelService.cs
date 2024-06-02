@@ -40,13 +40,6 @@ namespace EService.Services
                 Parts = listOfParts
             };
             await _modelRepository.AddModelAsync(model);
-            model = await _modelRepository.GetModelByIdAsync(model.Id);
-            foreach(var part in model!.Parts)
-            {
-                part.ModelId = model.Id;
-                part.Model = model;
-            }
-            await _modelRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Model successfully created."));
         }
         public async Task<(bool Confirmed, string Response)> UpdateModelAsync(UpdateModelDto request, int id)

@@ -1,4 +1,5 @@
 ﻿using EService.Dtos.OrderDtos;
+using EService.Dtos.ReviewDtos;
 using EService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,12 +36,12 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet("client"), Authorize(Roles = "Client")]
-        public async Task<IActionResult> GetClientOrders()
+        [HttpGet("{id}/review"), Authorize(Roles = "Client")]
+        public async Task<IActionResult> GetReview(int id)
         {
-            var result = await _orderService.GetCustomerOrdersAsync();
-            if (result.Confirmed)
-                return Ok(result.Orders);
+            var result = await _orderService.GetReviewFromOrderAsync(id);
+            if (result.Confirmed) 
+                return Ok(result.Review);
             else return BadRequest(result.Response);
         }
 
@@ -62,7 +63,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpPut("{id}/status"), Authorize(Roles = "Admin,Manager")]
+        [HttpPut("{id}/status"), Authorize(Roles = "Manager,Seller")]
         public async Task<IActionResult> UpdateStatus(UpdateOrderDto request, int id)
         {
             var result = await _orderService.UpdateOrderStatusAsync(request, id);
@@ -71,16 +72,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpPut("seller/{id}/status"), Authorize(Roles = "Seller")]
-        public async Task<IActionResult> UpdateStatusSeller(int id)
-        {
-            var result = await _orderService.UpdateOrderStatusSellerAsync(id);
-            if (result.Confirmed)
-                return Ok(result.Response);
-            else return BadRequest(result.Response);
-        }
-
-        [HttpPut("seller/{id}/paid"), Authorize(Roles = "Seller")]
+        [HttpPut("{id}/paid"), Authorize(Roles = "Seller")]
         public async Task<IActionResult> UpdatePaidSeller(int id)
         {
             var result = await _orderService.UpdateOrderPaidSellerAsync(id);
@@ -89,10 +81,19 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpPut("serviceman/{id}"), Authorize(Roles = "Serviceman")]
+        [HttpPut("{id}/services"), Authorize(Roles = "Serviceman")]
         public async Task<IActionResult> UpdateOrderServices(UpdateOrderDto request, int id)
         {
             var result = await _orderService.UpdateOrderServicesAsync(request, id);
+            if (result.Confirmed)
+                return Ok(result.Response);
+            else return BadRequest(result.Response);
+        }
+
+        [HttpPut("{id}/review"), Authorize(Roles = "Client")]
+        public async Task<IActionResult> UpdateSentReview(UpdateReviewDto request, int id)
+        {
+            var result = await _orderService.UpdateSentReview(request, id);
             if (result.Confirmed)
                 return Ok(result.Response);
             else return BadRequest(result.Response);
@@ -107,5 +108,13 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
+        [HttpDelete("{id}/review"), Authorize(Roles = "Client")]
+        public async Task<IActionResult> DeleteSentReview(int id)
+        {
+            var result = await _orderService.DeleteSentReview(id);
+            if (result.Confirmed)
+                return Ok(result.Response);
+            else return BadRequest(result.Response);
+        }
     }
 }

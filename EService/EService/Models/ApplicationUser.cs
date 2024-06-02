@@ -32,6 +32,7 @@ namespace EService.Models
         public List<Order> CustomerOrders { get; set; } = new List<Order>();
         [InverseProperty("Manager"), JsonIgnore]
         public List<Order> ManagerOrders { get; set; } = new List<Order>();
+        [InverseProperty("Serviceman")]
         public List<Service> Services { get; set; } = new List<Service>();
 
         public ApplicationUser() { }

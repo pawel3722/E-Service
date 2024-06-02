@@ -16,15 +16,15 @@ namespace EService.Repositories
         }
         public async Task<ServiceType?> GetServiceTypeByNameAsync(string name)
         {
-            return await Task.Run(() => _context.ServiceTypes.Where(s => s.Name == name).FirstOrDefaultAsync());
+            return await Task.Run(() => _context.ServiceTypes.Include(s => s.Services).Where(s => s.Name == name).FirstOrDefaultAsync());
         }
         public async Task<ServiceType?> GetServiceTypeByIdAsync(int id)
         {
-            return await Task.Run(() => _context.ServiceTypes.FirstOrDefaultAsync(st => st.Id == id));
+            return await Task.Run(() => _context.ServiceTypes.Include(s => s.Services).FirstOrDefaultAsync(st => st.Id == id));
         }
         public async Task<List<ServiceType>> GetAllServiceTypesAsync()
         {
-            return await Task.Run(() => _context.ServiceTypes.ToListAsync());
+            return await Task.Run(() => _context.ServiceTypes.Include(s => s.Services).ToListAsync());
         }
         public async Task AddServiceTypeAsync(ServiceType serviceType)
         {

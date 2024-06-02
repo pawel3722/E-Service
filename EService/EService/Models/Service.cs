@@ -1,4 +1,6 @@
-﻿namespace EService.Models
+﻿using System.Text.Json.Serialization;
+
+namespace EService.Models
 {
     public class Service
     {
@@ -17,12 +19,15 @@
         public ApplicationUser? Serviceman { get; set; }
 
         public int OrderId { get; set; }
+        [JsonIgnore]
         public Order Order { get; set; }
 
         public int ServiceTypeId { get; set; }
+        [JsonIgnore]
         public ServiceType ServiceType { get; set; }
 
         public int? PartId { get; set; }
+        [JsonIgnore]
         public Part? Part { get; set; }
 
         public Service() { }
