@@ -1,5 +1,6 @@
 ﻿using EService.Dtos.ServiceDtos;
 using EService.Services;
+using EService.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,24 +35,6 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet("client"), Authorize(Roles = "Client")]
-        public async Task<IActionResult> GetClientServices(int? orderId)
-        {
-            var result = await _serviceService.GetClientServices(orderId);
-            if (result.Confirmed)
-                return Ok(result.Services);
-            else return BadRequest(result.Response);
-        }
-
-        [HttpGet("serviceman"), Authorize(Roles = "Serviceman")]
-        public async Task<IActionResult> GetServicemanServices(int? orderId)
-        {
-            var result = await _serviceService.GetServicemanServices(orderId);
-            if (result.Confirmed)
-                return Ok(result.Services);
-            else return BadRequest(result.Response);
-        }
-
         [HttpPost, Authorize(Roles = "Admin,Seller,Manager,Serviceman")]
         public async Task<IActionResult> Create(CreateServiceDto request)
         {
@@ -70,7 +53,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpPut("serviceman/{id}"), Authorize(Roles = "Serviceman")]
+        [HttpPut("{id}/status"), Authorize(Roles = "Serviceman")]
         public async Task<IActionResult> UpdateServiceStatusServiceman(UpdateServiceDto request, int id)
         {
             var result = await _serviceService.UpdateServiceStatus(request, id);

@@ -1,4 +1,5 @@
 ﻿using EService.Dtos.AuthDtos;
+using EService.Dtos.MessageDtos;
 using EService.Dtos.RolesDtos;
 using EService.Models;
 using EService.Repositories;
@@ -22,67 +23,15 @@ namespace EService.Services
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
         }
-        public async Task<List<ApplicationUser>> GetAllUsersAsync()
-        {
-            return await _authRepository.GetAllUsersAsync();
-        }
-        public async Task<List<Role>> GetAllRolesAsync()
-        {
-            return await _authRepository.GetAllRolesAsync();
-        }
+        
         public async Task<ApplicationUser?> GetUserAsync(int id)
         {
             return await _authRepository.GetUserByIdAsync(id);
         }
-        public async Task<Role?> GetRoleAsync(int id)
-        {
-            return await _authRepository.GetRoleByIdAsync(id);
-        }
-        public async Task<(bool Confirmed, string Response)> AddUserRolesAsync(UpdateRolesDto request, int id)
-        {
-            var user = await _authRepository.GetUserByIdAsync(id);
-            if (user == null) return await Task.FromResult((false, "User with given id does not exist."));
-            List<Role> roles = new List<Role>();
-            foreach (var roleName in request.RoleNames)
-            {
-                var role = await _authRepository.GetRoleByNameAsync(roleName);
-                if (role == null) return await Task.FromResult((false, "Role with given name does not exist."));
-                user.Roles.Add(role);
-                role.Users.Add(user);
-            }
-            await _authRepository.SaveChangesAsync();
-            return await Task.FromResult((true, "User's roles successfully added."));
-        }
-        public async Task<(bool Confirmed, string Response)> RemoveUserRolesAsync(UpdateRolesDto request, int id)
-        {
-            var user = await _authRepository.GetUserByIdAsync(id);
-            if (user == null) return await Task.FromResult((false, "User with given id does not exist."));
-            List<Role> roles = new List<Role>();
-            foreach (var roleName in request.RoleNames)
-            {
-                var role = await _authRepository.GetRoleByNameAsync(roleName);
-                if (role == null) return await Task.FromResult((false, "Role with given name does not exist."));
-                if (user.Roles.Contains(role)) user.Roles.Remove(role);
-                else return await Task.FromResult((false, "Role is not performed by this user."));
-                if (role.Users.Contains(user)) role.Users.Remove(user);
-                else return await Task.FromResult((false, "User does not perform this role."));
-            }
-            await _authRepository.SaveChangesAsync();
-            return await Task.FromResult((true, "User's roles successfully removed."));
-        }
-
-        public async Task<(bool Confirmed, string Response)> DeleteUserAsync(int id)
-        {
-            var user = await _authRepository.GetUserByIdAsync(id);
-            if (user == null) return await Task.FromResult((false, "User with given id does not exist."));
-            await _authRepository.RemoveUserAsync(user);
-            return await Task.FromResult((true, "User successfully deleted."));
-        }
-
         public async Task<(bool Confirmed, string Response)> RegisterUserAsync(UserRegisterRequestDto request)
         {
             if (await _authRepository.UserExistsAsync(request.Email)) return await Task.FromResult((false, "User with specified email already exists."));
-            var role = await _authRepository.GetRoleAsync("Client");
+            var role = await _authRepository.GetRoleByNameAsync("Client");
             if (role == null)
             {
                 role = new Role() { Name = "Client" };
@@ -98,7 +47,7 @@ namespace EService.Services
                 PasswordSalt = PasswordSalt,
                 Roles = new List<Role> { role! }
             };
-            role!.Users.Add(newUser);
+            /*role!.Users.Add(newUser);*/
             await _authRepository.AddUserAsync(newUser);
             return await Task.FromResult((true, "User has been succesfully created."));
         }

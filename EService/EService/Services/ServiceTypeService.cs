@@ -23,8 +23,8 @@ namespace EService.Services
         public async Task<(bool Confirmed, string Response)> CreateServiceTypeAsync(CreateServiceTypeDto request)
         {
             var serviceType = await _serviceTypeRepository.GetServiceTypeByNameAsync(request.Name);
-            if (serviceType != null) return await Task.FromResult((false, "Service type with given name already exists."));
-            if(request.MaxPrice >= request.MinPrice) return await Task.FromResult((false, "Max value must be greater than min value."));
+            if(serviceType != null) return await Task.FromResult((false, "Service type with given name already exists."));
+            if(request.MaxPrice < request.MinPrice) return await Task.FromResult((false, "Max value must be greater than min value."));
             serviceType = new ServiceType
             {
                 Name = request.Name,
