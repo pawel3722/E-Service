@@ -30,11 +30,17 @@ namespace EService.Repositories
         }
         public async Task<List<Part>> GetAllPartsAsync()
         {
-            return await Task.Run(() => _context.Parts.
-            Include(p => p.Service).
-            Include(p => p.Model).
-            ToListAsync());
-
+            return await Task.Run(() => _context.Parts.Include(p => p.Service).ToListAsync());
+        }
+        public async Task SomethingAsync(int id, Service service)
+        {
+            var part = await _context.Parts.Where(p => p.Id == id).Include(p => p.Service).FirstOrDefaultAsync();
+            if (part == null) return;
+            if (part.Service == null)
+            {
+                part.Service = service;
+                await SaveChangesAsync();
+            }
         }
         public async Task AddPartAsync(Part part)
         {

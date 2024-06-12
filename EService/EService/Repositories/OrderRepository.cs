@@ -40,6 +40,10 @@ namespace EService.Repositories
             Include(o => o.Review).
             Include(o => o.Services).ToListAsync());
         }
+        public async Task<List<Order>> GetManagerOrdersAsync(int managerId)
+        {
+            return await Task.Run(() => _context.Orders.Where(o => o.ManagerId == managerId).ToListAsync());
+        }
         public async Task AddOrderAsync(Order order)
         {
             await _context.AddAsync(order);

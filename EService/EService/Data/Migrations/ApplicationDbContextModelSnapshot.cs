@@ -34,7 +34,7 @@ namespace EService.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("ApplicationUserRole");
+                    b.ToTable("ApplicationUserRole", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.ApplicationUser", b =>
@@ -77,7 +77,7 @@ namespace EService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.Message", b =>
@@ -107,7 +107,7 @@ namespace EService.Migrations
 
                     b.HasIndex("SendingUserId");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Messages", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.Model", b =>
@@ -131,7 +131,7 @@ namespace EService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Models");
+                    b.ToTable("Models", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.Order", b =>
@@ -163,7 +163,7 @@ namespace EService.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.Part", b =>
@@ -185,7 +185,7 @@ namespace EService.Migrations
 
                     b.HasIndex("ModelId");
 
-                    b.ToTable("Parts");
+                    b.ToTable("Parts", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.Review", b =>
@@ -210,7 +210,7 @@ namespace EService.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.Role", b =>
@@ -227,7 +227,7 @@ namespace EService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.Service", b =>
@@ -277,7 +277,7 @@ namespace EService.Migrations
 
                     b.HasIndex("ServicemanId");
 
-                    b.ToTable("Services");
+                    b.ToTable("Services", (string)null);
                 });
 
             modelBuilder.Entity("EService.Models.ServiceType", b =>
@@ -304,7 +304,7 @@ namespace EService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ServiceTypes");
+                    b.ToTable("ServiceTypes", (string)null);
                 });
 
             modelBuilder.Entity("ApplicationUserRole", b =>
