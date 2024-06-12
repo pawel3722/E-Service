@@ -15,16 +15,25 @@ namespace EService.Repositories
         }
         public async Task<Part?> GetPartByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Parts.FirstOrDefaultAsync(p => p.Id == id));
+            return await Task.Run(() => _context.Parts.
+            Include(p => p.Service).
+            Include(p => p.Model).
+            FirstOrDefaultAsync(p => p.Id == id));
 
         }
         public async Task<Part?> GetPartBySerialNumber(string serialNumber)
         {
-            return await Task.Run(() => _context.Parts.FirstOrDefaultAsync(p => p.SerialNumber == serialNumber));
+            return await Task.Run(() => _context.Parts.
+            Include(p => p.Service).
+            Include(p => p.Model).
+            FirstOrDefaultAsync(p => p.SerialNumber == serialNumber));
         }
         public async Task<List<Part>> GetAllPartsAsync()
         {
-            return await Task.Run(() => _context.Parts.ToListAsync());
+            return await Task.Run(() => _context.Parts.
+            Include(p => p.Service).
+            Include(p => p.Model).
+            ToListAsync());
 
         }
         public async Task AddPartAsync(Part part)

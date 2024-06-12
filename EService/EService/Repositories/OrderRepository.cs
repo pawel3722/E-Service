@@ -16,15 +16,29 @@ namespace EService.Repositories
 
         public async Task<Order?> GetOrderByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Orders.FirstOrDefaultAsync(o => o.Id == id));
+            return await Task.Run(() => _context.Orders.
+            Include(o => o.Customer).
+            Include(o => o.Manager).
+            Include(o => o.Review).
+            Include(o => o.Services).
+            FirstOrDefaultAsync(o => o.Id == id));
         }
         public async Task<List<Order>> GetAllOrdersAsync()
         {
-            return await Task.Run(() => _context.Orders.ToListAsync());
+            return await Task.Run(() => _context.Orders.
+            Include(o => o.Customer).
+            Include(o => o.Manager).
+            Include(o => o.Review).
+            Include(o => o.Services).
+            ToListAsync());
         }
         public async Task<List<Order>> GetCustomerOrdersAsync(int customerId)
         {
-            return await Task.Run(() => _context.Orders.Where(o => o.CustomerId == customerId).ToListAsync());
+            return await Task.Run(() => _context.Orders.Where(o => o.CustomerId == customerId).
+            Include(o => o.Customer).
+            Include(o => o.Manager).
+            Include(o => o.Review).
+            Include(o => o.Services).ToListAsync());
         }
         public async Task AddOrderAsync(Order order)
         {

@@ -15,11 +15,21 @@ namespace EService.Repositories
         }
         public async Task<Service?> GetServiceById(int id)
         {
-            return await Task.Run(() => _context.Services.FirstOrDefaultAsync(s => s.Id == id));
+            return await Task.Run(() => _context.Services.
+            Include(s => s.Serviceman).
+            Include(s => s.Order).
+            Include(s => s.ServiceType).
+            Include(s => s.Part).
+            FirstOrDefaultAsync(s => s.Id == id));
         }
         public async Task<List<Service>> GetAllServices()
         {
-            return await Task.Run(() => _context.Services.ToListAsync());
+            return await Task.Run(() => _context.Services.
+            Include(s => s.Serviceman).
+            Include(s => s.Order).
+            Include(s => s.ServiceType).
+            Include(s => s.Part).
+            ToListAsync());
         }
         public async Task AddServiceAsync(Service service)
         {

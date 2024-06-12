@@ -15,7 +15,10 @@ namespace EService.Repositories
         }
         public async Task<Message?> GetMessageByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Messages.FirstOrDefaultAsync(m => m.Id == id));
+            return await Task.Run(() => _context.Messages.Where(m => m.Id == id).
+            Include(m => m.ReceivingUser).
+            Include(m => m.SendingUser).            
+            FirstOrDefaultAsync());
         }
         public async Task<List<Message>> GetAllMessagesAsync()
         {

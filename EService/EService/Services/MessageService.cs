@@ -17,9 +17,13 @@ namespace EService.Services
             _messageRepository = messageRepository;
             _httpContextAccessor = contextAccessor;
             _authRepository = authRepository;
+            //mapper
         }
         public async Task<List<Message>> GetAllMessagesAsync()
         {
+            var messages = await _messageRepository.GetAllMessagesAsync();
+            //mapowanie do dtosów
+            //return dtosy, zamiast poniżej
             return await _messageRepository.GetAllMessagesAsync();
         }
         public async Task<Message?> GetMessageAsync(int id)

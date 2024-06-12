@@ -15,15 +15,21 @@ namespace EService.Repositories
         }
         public async Task<Model?> GetModelByNameAsync(string name)
         {
-            return await Task.Run(() => _context.Models.Where(m => m.Name == name).FirstOrDefaultAsync());
+            return await Task.Run(() => _context.Models.Where(m => m.Name == name).
+            Include(m => m.Parts).
+            FirstOrDefaultAsync());
         }
         public async Task<Model?> GetModelByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Models.FirstOrDefaultAsync(m => m.Id == id));
+            return await Task.Run(() => _context.Models.
+            Include(m => m.Parts).
+            FirstOrDefaultAsync(m => m.Id == id));
         }
         public async Task<List<Model>> GetAllModelsAsync()
         {
-            return await Task.Run(() => _context.Models.ToListAsync());
+            return await Task.Run(() => _context.Models.
+            Include(m => m.Parts).
+            ToListAsync());
         }
         public async Task AddModelAsync(Model model)
         {

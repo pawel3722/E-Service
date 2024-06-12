@@ -15,12 +15,16 @@ namespace EService.Repositories
         }
         public async Task<Review?> GetReviewByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Reviews.FirstOrDefaultAsync(r => r.Id == id));
+            return await Task.Run(() => _context.Reviews.
+            Include(r => r.Order).
+            FirstOrDefaultAsync(r => r.Id == id));
 
         }
         public async Task<List<Review>> GetAllReviewsAsync()
         {
-            return await Task.Run(() => _context.Reviews.ToListAsync());
+            return await Task.Run(() => _context.Reviews.
+            Include(r => r.Order).
+            ToListAsync());
 
         }
         public async Task AddReviewAsync(Review review)

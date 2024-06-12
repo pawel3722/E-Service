@@ -15,43 +15,72 @@ namespace EService.Repositories
 
         public async Task<Role?> GetRoleByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Roles.Where(r => r.Id == id).FirstOrDefaultAsync());
+            return await Task.Run(() => _context.Roles.Where(r => r.Id == id).
+            Include(u => u.Users).
+            FirstOrDefaultAsync());
         }
         public async Task<Role?> GetRoleByNameAsync(string name)
         {
-            return await Task.Run(() => _context.Roles.Where(r => r.Name == name).FirstOrDefaultAsync());
+            return await Task.Run(() => _context.Roles.Where(r => r.Name == name).
+            Include(u => u.Users).
+            FirstOrDefaultAsync());
         }
         public async Task<ApplicationUser?> GetUserByIdAsync(int id)
         {
             return await Task.Run(() => _context.Users.Where(u => u.Id == id).
             Include(u => u.Roles).
-            FirstOrDefaultAsync());
+            Include(u => u.SentMessages). //?
+            Include(u => u.ReceivedMessages). //?
+            Include(u => u.CustomerOrders). //?
+            Include(u => u.ManagerOrders). //?
+            Include(u => u.Services). //?
+            FirstOrDefaultAsync()); 
         }
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
             return await Task.Run(() => _context.Users.
             Include(m => m.Roles).
+            Include(u => u.SentMessages). //?
+            Include(u => u.ReceivedMessages). //?
+            Include(u => u.CustomerOrders). //?
+            Include(u => u.ManagerOrders). //?
+            Include(u => u.Services). //?
             ToListAsync());
         }
         public async Task<ApplicationUser?> GetUserByEmailAsync(string email)
         {
             return await Task.Run(() => _context.Users.Where(u => u.Email == email).
             Include(u => u.Roles).
+            Include(u => u.SentMessages). //?
+            Include(u => u.ReceivedMessages). //?
+            Include(u => u.CustomerOrders). //?
+            Include(u => u.ManagerOrders). //?
+            Include(u => u.Services). //?
             FirstOrDefaultAsync());
         }
         public async Task<ApplicationUser?> GetUserByRefreshTokenAsync(string refreshToken)
         {
             return await Task.Run(() => _context.Users.Where(u => u.RefreshToken == refreshToken).
             Include(u => u.Roles).
+            Include(u => u.SentMessages). //?
+            Include(u => u.ReceivedMessages). //?
+            Include(u => u.CustomerOrders). //?
+            Include(u => u.ManagerOrders). //?
+            Include(u => u.Services). //?
             FirstOrDefaultAsync());
         }
         public async Task<List<Role>> GetAllRolesAsync()
         {
-            return await Task.Run(() => _context.Roles.ToListAsync());
+            //return await Task.Run(() => _context.Roles.ToListAsync());
+            return await Task.Run(() => _context.Roles.
+            Include(u => u.Users).
+            ToListAsync());
         }
         public async Task<Role?> GetRoleAsync(string name)
         {
-            return await Task.Run(() => _context.Roles.FirstOrDefaultAsync(r => r.Name == name));
+            return await Task.Run(() => _context.Roles.
+            Include(u => u.Users).
+            FirstOrDefaultAsync(r => r.Name == name));
         }
         public async Task<bool> UserExistsAsync(string email)
         {
