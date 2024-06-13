@@ -21,9 +21,9 @@
     justify-content: center;
 }
 
-.content_login input {
+.content_login form > input {
     height: 100%;
-    width: 15vw;
+    width: 18vw;
     padding: 5px;
     border-radius: 50vh;
     border: none;
@@ -31,20 +31,31 @@
     margin: 0 auto;
 }
 
-.content_login label {
+.content_login form label {
     margin-top: 2em;
 }
 
-.content_login button {
-    margin: 30px auto;
-    height: 50%;
+.logBtn, .regBtn {
+    margin: 30px auto 10px auto;
+    height: 2.3em;
     border-radius: 50vh;
     color: white;
     background-color: rgb(6, 184, 169);
     border: none;
     font-size: 1.1em;
     font-weight: bold;
-    width: 8vw;
+    width: 13vw;
+}
+
+.regBtn {
+    margin: 0 auto 20px auto;
+
+}
+
+.reg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .content_login button:hover {
@@ -65,3 +76,18 @@
     width: 0.9em;
     margin-right: 0.2em;
 }
+
+.persistCheck {
+    font-size: 0.75rem;
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+    width: fit-content;
+}
+
+/* [type="checkbox"] {
+    height: 20px;
+    width: 20px;
+    margin: 0 5px 2px 2px;
+} */

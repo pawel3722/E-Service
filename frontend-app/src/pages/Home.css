@@ -8,6 +8,22 @@
     row-gap: 180px;
 }
 
+.title {
+    text-align: center;
+    font-size: 8em;
+    font-weight: bold;
+    background: linear-gradient(to right, rgb(1, 3, 96), rgb(188, 189, 240));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+article {
+    width: 60vw;
+    text-align: center;
+    margin: auto;
+    font-size: 1.4em;
+}
+
 .info {
     display: flex;
     flex-direction: column;
