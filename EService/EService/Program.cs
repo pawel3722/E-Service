@@ -53,23 +53,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-/*builder.Services.AddAuthentication(option =>
+builder.Services.Configure<CookiePolicyOptions>(options =>
 {
-    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
-        };
-    });*/
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+    options.Secure = CookieSecurePolicy.Always;
+    options.OnAppendCookie = cookieContext =>
+        CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+    options.OnDeleteCookie = cookieContext =>
+        CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
+});
 
+void CheckSameSite(HttpContext httpContext, CookieOptions options)
+{
+    if (options.SameSite == SameSiteMode.None)
+    {
+        var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
+        /*if (MyUserAgentDetectionLib.DisallowsSameSiteNone(userAgent))
+        {
+            options.SameSite = SameSiteMode.Unspecified;
+        }*/
+    }
+}
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
