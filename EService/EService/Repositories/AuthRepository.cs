@@ -19,6 +19,7 @@ namespace EService.Repositories
             Include(u => u.Users).
             FirstOrDefaultAsync());
         }
+        //CZY TO POWINNO TU BYC?
         public async Task<ApplicationUser?> GetUserByIdAsync(int id)
         {
             return await Task.Run(() => _context.Users.Where(u => u.Id == id).

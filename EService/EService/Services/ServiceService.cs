@@ -1,5 +1,8 @@
-﻿using EService.Dtos.ServiceDtos;
+﻿using AutoMapper;
+using EService.Dtos.ReviewDtos;
+using EService.Dtos.ServiceDtos;
 using EService.Models;
+using EService.Repositories;
 using EService.Repositories.Interfaces;
 using System.Security.Claims;
 using System.Transactions;
@@ -14,7 +17,8 @@ namespace EService.Services
         private readonly IPartRepository _partRepository;
         private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public ServiceService(IServiceRepository serviceRepository, IOrderRepository orderRepository, IServiceTypeRepository serviceTypeRepository, IPartRepository partRepository, IApplicationUserRepository applicationUserRepository, IHttpContextAccessor httpContextAccessor)
+        private readonly IMapper _mapper;
+        public ServiceService(IServiceRepository serviceRepository, IOrderRepository orderRepository, IServiceTypeRepository serviceTypeRepository, IPartRepository partRepository, IApplicationUserRepository applicationUserRepository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _serviceRepository = serviceRepository;
             _orderRepository = orderRepository;
@@ -22,14 +26,19 @@ namespace EService.Services
             _partRepository = partRepository;
             _applicationUserRepository = applicationUserRepository;
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
-        public async Task<Service?> GetService(int id)
+        public async Task<ReturnServiceDto?> GetService(int id)
         {
-            return await _serviceRepository.GetServiceById(id);
+            var review = await _serviceRepository.GetServiceById(id);
+            return _mapper.Map<ReturnServiceDto>(review);
+           // return await _serviceRepository.GetServiceById(id);
         }
-        public async Task<List<Service>> GetAllServices()
+        public async Task<List<ReturnServiceDto>> GetAllServices()
         {
-            return await _serviceRepository.GetAllServices();
+            var review = await _serviceRepository.GetAllServices();
+            return _mapper.Map<List<ReturnServiceDto>>(review);
+           // return await _serviceRepository.GetAllServices();
         }
         public async Task<(bool Confirmed, string Response)> CreateService(CreateServiceDto request)
         {

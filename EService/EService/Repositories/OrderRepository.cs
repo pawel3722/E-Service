@@ -42,7 +42,12 @@ namespace EService.Repositories
         }
         public async Task<List<Order>> GetManagerOrdersAsync(int managerId)
         {
-            return await Task.Run(() => _context.Orders.Where(o => o.ManagerId == managerId).ToListAsync());
+            return await Task.Run(() => _context.Orders.Where(o => o.ManagerId == managerId).
+            Include(o => o.Customer).
+            Include(o => o.Manager).
+            Include(o => o.Review).
+            Include(o => o.Services).
+            ToListAsync());
         }
         public async Task AddOrderAsync(Order order)
         {

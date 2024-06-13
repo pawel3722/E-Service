@@ -1,10 +1,9 @@
-﻿using EService.Dtos.ApplicationUserDtos;
-using EService.Models;
+﻿using EService.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EService.Dtos.MessageDtos
 {
-    public class ReturnMessageDto
+    public class FieldsOnlyMessageDto
     {
         public int Id { get; set; }
         public string Text { get; set; }
@@ -12,12 +11,9 @@ namespace EService.Dtos.MessageDtos
 
         //[ForeignKey("SendingUser")]
         public int? SendingUserId { get; set; }
-        public FieldsOnlyApplicationUserDto? SendingUser { get; set; }
 
        // [ForeignKey("ReceivingUser")]
         public int ReceivingUserId { get; set; }
-        public FieldsOnlyApplicationUserDto ReceivingUser { get; set; }
 
-       // public Message() { }
     }
 }

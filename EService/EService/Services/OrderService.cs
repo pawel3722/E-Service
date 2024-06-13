@@ -1,4 +1,6 @@
-﻿using EService.Dtos.OrderDtos;
+﻿using AutoMapper;
+using EService.Dtos.ApplicationUserDtos;
+using EService.Dtos.OrderDtos;
 using EService.Dtos.ReviewDtos;
 using EService.Models;
 using EService.Repositories.Interfaces;
@@ -15,8 +17,9 @@ namespace EService.Services
         private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IReviewRepository _reviewRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
 
-        public OrderService(IOrderRepository orderRepository, IServiceTypeRepository serviceTypeRepository, IPartRepository partRepository, IApplicationUserRepository applicationUserRepository, IReviewRepository reviewRepository, IHttpContextAccessor httpContextAccessor)
+        public OrderService(IOrderRepository orderRepository, IServiceTypeRepository serviceTypeRepository, IPartRepository partRepository, IApplicationUserRepository applicationUserRepository, IReviewRepository reviewRepository, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _orderRepository = orderRepository;
             _serviceTypeRepository = serviceTypeRepository;
@@ -24,15 +27,20 @@ namespace EService.Services
             _applicationUserRepository = applicationUserRepository;
             _reviewRepository = reviewRepository;
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
 
-        public async Task<Order?> GetOrderAsync(int id)
+        public async Task<ReturnOrderDto?> GetOrderAsync(int id)
         {
-            return await _orderRepository.GetOrderByIdAsync(id);
+            var order = await _applicationUserRepository.GetAllUsersAsync();
+            return _mapper.Map<ReturnOrderDto>(order);
+            // await _orderRepository.GetOrderByIdAsync(id);
         }
-        public async Task<List<Order>> GetAllOrdersAsync()
+        public async Task<List<ReturnOrderDto>> GetAllOrdersAsync()
         {
-            return await _orderRepository.GetAllOrdersAsync();
+            var orders = await _applicationUserRepository.GetAllUsersAsync();
+            return _mapper.Map<List<ReturnOrderDto>>(orders);
+            //return await _orderRepository.GetAllOrdersAsync();
         }
         public async Task<(bool Confirmed, string Response)> CreateOrderAsync(CreateOrderDto request)
         {
@@ -276,14 +284,16 @@ namespace EService.Services
             await _reviewRepository.RemoveReviewAsync(review);
             return await Task.FromResult((true, "Review successfully deleted."));
         }
-        public async Task<(bool Confirmed, string Response, Review? Review)> GetReviewFromOrderAsync(int id)
-        {
+        public async Task<(bool Confirmed, string Response, ReturnReviewDto? Review)> GetReviewFromOrderAsync(int id)
+        {         
+
             var user = await _applicationUserRepository.GetUserByIdAsync(Int32.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!));
-            if(user == null) return await Task.FromResult<(bool Confirmed, string Response, Review? Review)>((false, "User with given id does not exist.", null));
+            if(user == null) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "User with given id does not exist.", null));
             var order = await _orderRepository.GetOrderByIdAsync(id);
-            if(order == null) return await Task.FromResult<(bool Confirmed, string Response, Review? Review)>((false, "Order with given id does not exist.", null));
-            if(user.Id != order.CustomerId) return await Task.FromResult<(bool Confirmed, string Response, Review? Review)>((false, "Order with given id does not belong to this user.", null));
-            return await Task.FromResult((true, "", order.Review));
+            if(order == null) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "Order with given id does not exist.", null));
+            if(user.Id != order.CustomerId) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "Order with given id does not belong to this user.", null));
+            var reviewDto = _mapper.Map<ReturnReviewDto>(order.Review);
+            return await Task.FromResult((true, "", reviewDto));
         }
     }
 }

@@ -1,0 +1,11 @@
+﻿namespace EService.Dtos.ServiceTypeDtos
+{
+    public class FieldsOnlyServiceTypeDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public double MinPrice { get; set; }
+        public double MaxPrice { get; set; }
+        public string DeviceType { get; set; }
+    }
+}

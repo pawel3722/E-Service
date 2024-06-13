@@ -1,4 +1,6 @@
-﻿using EService.Dtos.ReviewDtos;
+﻿using AutoMapper;
+using EService.Dtos.ApplicationUserDtos;
+using EService.Dtos.ReviewDtos;
 using EService.Models;
 using EService.Repositories;
 using EService.Repositories.Interfaces;
@@ -10,20 +12,25 @@ namespace EService.Services
     {
         private readonly IReviewRepository _reviewRepository;
         private readonly IOrderRepository _orderRepository;
-
-        public ReviewService(IReviewRepository reviewRepository, IOrderRepository orderRepository)
+        private readonly IMapper _mapper;
+        public ReviewService(IReviewRepository reviewRepository, IOrderRepository orderRepository, IMapper mapper)
         {
             _reviewRepository = reviewRepository;
             _orderRepository = orderRepository;
+            _mapper = mapper;
         }
 
-        public async Task<Review?> GetReviewAsync(int id)
+        public async Task<ReturnReviewDto?> GetReviewAsync(int id)
         {
-            return await _reviewRepository.GetReviewByIdAsync(id);
+            var reviews = await _reviewRepository.GetReviewByIdAsync(id);
+            return _mapper.Map<ReturnReviewDto>(reviews);
+           // return await _reviewRepository.GetReviewByIdAsync(id);
         }
-        public async Task<List<Review>> GetAllReviewsAsync()
+        public async Task<List<ReturnReviewDto>> GetAllReviewsAsync()
         {
-            return await _reviewRepository.GetAllReviewsAsync();
+            var review = await _reviewRepository.GetAllReviewsAsync();
+            return _mapper.Map<List<ReturnReviewDto>>(review);
+           // return await _reviewRepository.GetAllReviewsAsync();
         }
         public async Task<(bool Confirmed, string Response)> CreateReviewAsync(CreateReviewDto request)
         {
