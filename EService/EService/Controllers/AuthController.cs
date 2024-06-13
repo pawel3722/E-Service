@@ -1,4 +1,5 @@
 ﻿using EService.Dtos.AuthDtos;
+using EService.Dtos.MessageDtos;
 using EService.Dtos.RolesDtos;
 using EService.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,6 @@ using System.Security.Claims;
 
 namespace EService.Controllers
 {
-    
     [Route("api/[controller]")]
     [ApiController]
     [EnableCors("_myAllowSpecificOrigins")]
@@ -52,84 +52,13 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpGet("admin/users/{id}"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUser(int id)
-        {
-            var result = await _authService.GetUserAsync(id);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
-        }
         [HttpGet("users/me"), Authorize]
         public async Task<IActionResult> GetMe()
         {
             var result = await _authService.GetUserAsync(Int32.Parse(Request.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!));
             if (result != null)
-            {
                 return Ok(result);
-            }
             return NotFound();
-        }
-
-        [HttpGet("admin/users"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetUsers()
-        {
-            var result = await _authService.GetAllUsersAsync();
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
-        }
-        [HttpGet("admin/roles/{id}"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetRole(int id)
-        {
-            var result = await _authService.GetRoleAsync(id);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
-        }
-
-        [HttpGet("admin/roles"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetRoles()
-        {
-            var result = await _authService.GetAllRolesAsync();
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
-        }
-
-        [HttpPost("admin/users/{id}/roles"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddRoles(UpdateRolesDto request, int id)
-        {
-            var result = await _authService.AddUserRolesAsync(request, id);
-            if (result.Confirmed)
-                return Ok(result.Response);
-            else return BadRequest(result.Response);
-        }
-
-        [HttpDelete("admin/users/{id}/roles"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteRoles(UpdateRolesDto request, int id)
-        {
-            var result = await _authService.RemoveUserRolesAsync(request, id);
-            if (result.Confirmed)
-                return Ok(result.Response);
-            else return BadRequest(result.Response);
-        }
-
-        [HttpDelete("admin/users/{id}"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            var result = await _authService.DeleteUserAsync(id);
-            if (result.Confirmed)
-                return Ok(result.Response);
-            else return BadRequest(result.Response);
         }
     }
 }

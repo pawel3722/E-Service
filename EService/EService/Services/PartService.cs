@@ -43,34 +43,27 @@ namespace EService.Services
         public async Task<(bool Confirmed, string Response)> UpdatePartAsync(UpdatePartDto request, int id)
         {
             var part = await _partRepository.GetPartByIdAsync(id);
-            if (part != null)
+            if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
+            Model? model = null;
+            if (request.ModelId != null)
             {
-                Model? model = null;
-                if (request.ModelId != null)
-                {
-                    model = await _modelRepository.GetModelByIdAsync(request.ModelId.Value);
-                    if(model == null) return await Task.FromResult((false, "Model with given id does not exist."));
-                    if(part.Model != null) part.Model.Parts.Remove(part);
-                    part.ModelId = request.ModelId.Value;
-                    part.Model = model;
-                    model.Parts.Add(part);
-                }
-                if(request.SerialNumber != null) part.SerialNumber = request.SerialNumber;
-                await _partRepository.SaveChangesAsync();
-                return await Task.FromResult((true, "Part successfully updated."));
+                model = await _modelRepository.GetModelByIdAsync(request.ModelId.Value);
+                if(model == null) return await Task.FromResult((false, "Model with given id does not exist."));
+                if(part.Model != null) part.Model.Parts.Remove(part);
+                part.ModelId = request.ModelId.Value;
+                part.Model = model;
             }
-            else return await Task.FromResult((false, "Part with given id does not exist."));
+            if(request.SerialNumber != null) part.SerialNumber = request.SerialNumber;
+            await _partRepository.SaveChangesAsync();
+            return await Task.FromResult((true, "Part successfully updated."));
         }
 
         public async Task<(bool Confirmed, string Response)> DeletePartAsync(int id)
         {
             var part = await _partRepository.GetPartByIdAsync(id);
-            if (part != null)
-            {
-                await _partRepository.RemovePartAsync(part);
-                return await Task.FromResult((true, "Part successfully deleted."));
-            }
-            else return await Task.FromResult((false, "Part with given id does not exist."));
+            if (part != null) return await Task.FromResult((false, "Part with given id does not exist."));
+            await _partRepository.RemovePartAsync(part);
+            return await Task.FromResult((true, "Part successfully deleted."));
         }
 
 
