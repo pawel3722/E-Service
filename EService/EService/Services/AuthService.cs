@@ -63,7 +63,10 @@ namespace EService.Services
                 JwtToken = jwtToken,
                 RefreshToken = refreshToken.Token,
                 CreatedAt = refreshToken.CreatedAt,
-                Expires = refreshToken.Expires
+                Expires = refreshToken.Expires,
+                Roles = user.Roles,
+                Id = user.Id,
+                Email = user.Email
             };
             SetRefreshTokenInResponse(refreshToken);
             await SetRefreshTokenForUserAsync(refreshToken, user);
@@ -82,7 +85,10 @@ namespace EService.Services
                 JwtToken = jwtToken,
                 RefreshToken = newRefreshToken.Token,
                 CreatedAt = newRefreshToken.CreatedAt,
-                Expires = newRefreshToken.Expires
+                Expires = newRefreshToken.Expires,
+                Roles = user.Roles,
+                Id = user.Id,
+                Email = user.Email
             };
             SetRefreshTokenInResponse(newRefreshToken);
             await SetRefreshTokenForUserAsync(newRefreshToken, user);
@@ -117,13 +123,13 @@ namespace EService.Services
                 claims.Add(new Claim(ClaimTypes.Role, role.Name));
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddHours(1), signingCredentials: creds);
+            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddSeconds(60), signingCredentials: creds);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;
         }
         private (string Token, DateTime CreatedAt, DateTime Expires) GenerateRefreshToken()
         {
-            return (Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)), DateTime.Now, DateTime.Now.AddDays(7));
+            return (Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)), DateTime.Now, DateTime.Now.AddSeconds(60));
         }
         private void SetRefreshTokenInResponse((string Token, DateTime CreatedAt, DateTime Expires) refreshToken)
         {

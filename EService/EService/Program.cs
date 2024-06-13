@@ -45,6 +45,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
+        ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
         ValidateIssuer = false,
@@ -52,27 +53,22 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
+/*builder.Services.AddAuthentication(option =>
 {
-    options.MinimumSameSitePolicy = SameSiteMode.None;
-    options.Secure = CookieSecurePolicy.Always;
-    options.OnAppendCookie = cookieContext =>
-        CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
-    options.OnDeleteCookie = cookieContext =>
-        CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
-});
-
-void CheckSameSite(HttpContext httpContext, CookieOptions options)
-{
-    if (options.SameSite == SameSiteMode.None)
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
     {
-        var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
-        /*if (MyUserAgentDetectionLib.DisallowsSameSiteNone(userAgent))
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            options.SameSite = SameSiteMode.Unspecified;
-        }*/
-    }
-}
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
+        };
+    });*/
 
 
 builder.Services.AddHttpContextAccessor();
