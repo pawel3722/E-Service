@@ -23,16 +23,16 @@ namespace EService.Services
             _applicationUserRepository = applicationUserRepository;
             _mapper = mapper;
         }
-        public async Task<List<ReturnApplicationUserDto>> GetAllMessagesAsync()
+        public async Task<List<ReturnMessageDto>> GetAllMessagesAsync()
         {
             var messages = await _messageRepository.GetAllMessagesAsync();
-            return _mapper.Map<List<ReturnApplicationUserDto>>(messages);
+            return _mapper.Map<List<ReturnMessageDto>>(messages);
            // return await _messageRepository.GetAllMessagesAsync();
         }
-        public async Task<ReturnApplicationUserDto?> GetMessageAsync(int id)
+        public async Task<ReturnMessageDto?> GetMessageAsync(int id)
         {
             var message = await _messageRepository.GetMessageByIdAsync(id);
-            return _mapper.Map<ReturnApplicationUserDto>(message);
+            return _mapper.Map<ReturnMessageDto>(message);
             //return await _messageRepository.GetMessageByIdAsync(id);
         }
         public async Task<(bool Confirmed, string Response)> CreateMessageAsync(CreateMessageDto request)

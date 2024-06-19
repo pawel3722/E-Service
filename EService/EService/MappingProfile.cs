@@ -16,26 +16,25 @@ namespace EService
     {
         public MappingProfile()
         {
-            /*CreateMap<ApplicationUser, ReturnApplicationUserDto>().
-                ForMember(u => CreateMap<Role, FieldsOnlyRoleDto>().
-                                    ForMember(u => u.Id, r => r.MapFrom(s => s.Id)).
-                                    ForMember(u => u.Name, r => r.MapFrom(s => s.Name)),
-                                    r => r.MapFrom(s => s.Roles)).
 
+            CreateMap<Role, FieldsOnlyRoleDto>();
+            CreateMap<Message, FieldsOnlyMessageDto>();
+            CreateMap<Order, FieldsOnlyOrderDto>();
+            CreateMap<Service, FieldsOnlyServiceDto>();
+            CreateMap<Model, FieldsOnlyModelDto>();
+            CreateMap<Part, FieldsOnlyPartDto>();
+            CreateMap<ServiceType, FieldsOnlyServiceTypeDto>();
+            CreateMap<Review, FieldsOnlyReviewDto>();
+            CreateMap<ApplicationUser, FieldsOnlyApplicationUserDto>();
+
+            CreateMap<ApplicationUser, ReturnApplicationUserDto>().
+                ForMember(u => u.Roles, r => r.MapFrom(s => s.Roles)).
                 ForMember(u => u.SentMessages, r => r.MapFrom(s => s.SentMessages)).
                 ForMember(u => u.ReceivedMessages, r => r.MapFrom(s => s.ReceivedMessages)).
                 ForMember(u => u.CustomerOrders, r => r.MapFrom(s => s.CustomerOrders)).
                 ForMember(u => u.ManagerOrders, r => r.MapFrom(s => s.ManagerOrders)).
-                ForMember(u => u.Services, r => r.MapFrom(s => s.Services));*/
-
-            CreateMap<ApplicationUser, ReturnApplicationUserDto>().
-                             ForMember(u => CreateMap<Role, FieldsOnlyRoleDto>(), r => r.MapFrom(s => s.Roles)).
-                             ForMember(u => CreateMap<Message, FieldsOnlyMessageDto>(), r => r.MapFrom(s => s.SentMessages)).
-                             ForMember(u => CreateMap<Message, FieldsOnlyMessageDto>(), r => r.MapFrom(s => s.ReceivedMessages)).
-                             ForMember(u => CreateMap<Order, FieldsOnlyOrderDto>(), r => r.MapFrom(s => s.CustomerOrders)).
-                             ForMember(u => CreateMap<Order, FieldsOnlyOrderDto>(), r => r.MapFrom(s => s.ManagerOrders)).
-                             ForMember(u => CreateMap<Service, FieldsOnlyServiceDto>(), r => r.MapFrom(s => s.Services));
-
+                ForMember(u => u.Services, r => r.MapFrom(s => s.Services));
+         
             CreateMap<Message, ReturnMessageDto>().
                 ForMember(u => u.SendingUser, r => r.MapFrom(s => s.SendingUser)).
                 ForMember(u => u.ReceivingUser, r => r.MapFrom(s => s.ReceivingUser));

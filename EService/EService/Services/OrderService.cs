@@ -32,13 +32,13 @@ namespace EService.Services
 
         public async Task<ReturnOrderDto?> GetOrderAsync(int id)
         {
-            var order = await _applicationUserRepository.GetAllUsersAsync();
+            var order = await _orderRepository.GetOrderByIdAsync(id);
             return _mapper.Map<ReturnOrderDto>(order);
             // await _orderRepository.GetOrderByIdAsync(id);
         }
         public async Task<List<ReturnOrderDto>> GetAllOrdersAsync()
         {
-            var orders = await _applicationUserRepository.GetAllUsersAsync();
+            var orders = await _orderRepository.GetAllOrdersAsync();
             return _mapper.Map<List<ReturnOrderDto>>(orders);
             //return await _orderRepository.GetAllOrdersAsync();
         }
