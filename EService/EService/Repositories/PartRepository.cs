@@ -2,6 +2,7 @@
 using EService.Models;
 using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace EService.Repositories
 {
@@ -15,26 +16,45 @@ namespace EService.Repositories
         }
         public async Task<Part?> GetPartByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Parts.Include(p => p.Service).FirstOrDefaultAsync(p => p.Id == id));
-
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            Part? part = null;
+            try
+            {
+                part = await Task.Run(() => _context.Parts.FirstOrDefaultAsync(p => p.Id == id));
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => part);
         }
         public async Task<Part?> GetPartBySerialNumber(string serialNumber)
         {
-            return await Task.Run(() => _context.Parts.Include(p => p.Service).FirstOrDefaultAsync(p => p.SerialNumber == serialNumber));
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            Part? part = null;
+            try
+            {
+                part = await Task.Run(() => _context.Parts.FirstOrDefaultAsync(p => p.SerialNumber == serialNumber));
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => part);
         }
         public async Task<List<Part>> GetAllPartsAsync()
         {
-            return await Task.Run(() => _context.Parts.Include(p => p.Service).ToListAsync());
-        }
-        public async Task SomethingAsync(int id, Service service)
-        {
-            var part = await _context.Parts.Where(p => p.Id == id).Include(p => p.Service).FirstOrDefaultAsync();
-            if (part == null) return;
-            if (part.Service == null)
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            List<Part> arr = new List<Part>();
+            try
             {
-                part.Service = service;
-                await SaveChangesAsync();
+                arr = await Task.Run(() => _context.Parts.ToListAsync());
+                scope.Complete();
             }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task AddPartAsync(Part part)
         {
@@ -49,7 +69,6 @@ namespace EService.Repositories
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
-
         }
     }
 }

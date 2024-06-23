@@ -2,6 +2,7 @@
 using EService.Models;
 using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace EService.Repositories
 {
@@ -15,15 +16,45 @@ namespace EService.Repositories
         }
         public async Task<Model?> GetModelByNameAsync(string name)
         {
-            return await Task.Run(() => _context.Models.Where(m => m.Name == name).FirstOrDefaultAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            Model? model = null;
+            try
+            {
+                model = await Task.Run(() => _context.Models.Where(m => m.Name == name).FirstOrDefaultAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => model);
         }
         public async Task<Model?> GetModelByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Models.FirstOrDefaultAsync(m => m.Id == id));
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            Model? model = null;
+            try
+            {
+                model = await Task.Run(() => _context.Models.FirstOrDefaultAsync(m => m.Id == id));
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => model);
         }
         public async Task<List<Model>> GetAllModelsAsync()
         {
-            return await Task.Run(() => _context.Models.ToListAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            List<Model> arr = new List<Model>();
+            try
+            {
+                arr = await Task.Run(() => _context.Models.ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task AddModelAsync(Model model)
         {

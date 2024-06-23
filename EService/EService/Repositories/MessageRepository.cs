@@ -2,6 +2,7 @@
 using EService.Models;
 using EService.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace EService.Repositories
 {
@@ -15,14 +16,34 @@ namespace EService.Repositories
         }
         public async Task<Message?> GetMessageByIdAsync(int id)
         {
-            return await Task.Run(() => _context.Messages.FirstOrDefaultAsync(m => m.Id == id));
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            Message? msg = null;
+            try
+            {
+                msg = await Task.Run(() => _context.Messages.FirstOrDefaultAsync(m => m.Id == id));
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => msg);
         }
         public async Task<List<Message>> GetAllMessagesAsync()
         {
-            return await Task.Run(() => _context.Messages.
-            Include(m => m.ReceivingUser).
-            Include(m => m.SendingUser).
-            ToListAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            List<Message> arr = new List<Message>();
+            try
+            {
+                arr = await Task.Run(() => _context.Messages.
+                                                    Include(m => m.ReceivingUser).
+                                                    Include(m => m.SendingUser).
+                                                    ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task<List<Message>> GetAllMessagesSentByToAsync(int senderId, int receiverId)
         {
