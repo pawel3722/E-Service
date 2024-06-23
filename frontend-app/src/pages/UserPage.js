@@ -2,8 +2,9 @@ import React from 'react'
 import { useState, useEffect } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
+import ClientHomePageWidget from '../components/ClientHomePageWidget';
 
-function AdminPage() {
+function UserPage() {
   const [users, setUsers] = useState();
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
@@ -50,14 +51,22 @@ function AdminPage() {
 
   return (
     <>
-      <div>AdminPage</div>
+    
+      <div>UserPage</div>
       {
         users
-          ? <p>Rola: { users.roles[0].name }</p>
-          : <p>Brak użytkownika</p>
+          ? 
+          (
+            // <p>Rola: { users.roles[0].name }</p>
+             users.roles[0].name == "Client"
+              ?  <ClientHomePageWidget />
+              : <p>Brak klienta</p>
+          )
+          : <p>Brak roli</p>
       }
-    </>
+           
+      </>
   )
 }
 
-export default AdminPage
+export default UserPage

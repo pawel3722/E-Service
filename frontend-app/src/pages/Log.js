@@ -53,7 +53,7 @@ function Log() {
             setAuth({ email, password, accessToken, logged: true });
             setUser('');
             setPwd('');
-            navigate('/admin')
+            navigate('/user')
         } catch (err) {
             if (!err?.response) {
                 setErrMsg('No Server Response');
