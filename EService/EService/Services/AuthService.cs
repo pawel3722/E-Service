@@ -7,6 +7,7 @@ using EService.Models;
 using EService.Repositories;
 using EService.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -70,7 +71,7 @@ namespace EService.Services
                 RefreshToken = refreshToken.Token,
                 CreatedAt = refreshToken.CreatedAt,
                 Expires = refreshToken.Expires,
-                Roles = user.Roles,
+                Roles = _mapper.Map<List<ReturnRoleDto>>(user.Roles),
                 Id = user.Id,
                 Email = user.Email
             };
@@ -92,7 +93,7 @@ namespace EService.Services
                 RefreshToken = newRefreshToken.Token,
                 CreatedAt = newRefreshToken.CreatedAt,
                 Expires = newRefreshToken.Expires,
-                Roles = user.Roles,
+                Roles = _mapper.Map<List<ReturnRoleDto>>(user.Roles),
                 Id = user.Id,
                 Email = user.Email
             };

@@ -23,12 +23,12 @@ namespace EService.Repositories
             Order? order = null;
             try
             {
-                order = await Task.Run(() => _context.Orders.
+                order = await _context.Orders.Where(o => o.Id == id).
                     Include(o => o.Customer).
                     Include(o => o.Manager).
                     Include(o => o.Review).
                     Include(o => o.Services).
-                    FirstOrDefaultAsync(o => o.Id == id));
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -42,12 +42,12 @@ namespace EService.Repositories
             List<Order> arr = new List<Order>();
             try
             {
-                arr = await Task.Run(() => _context.Orders.
+                arr = await _context.Orders.
                     Include(o => o.Customer).
                     Include(o => o.Manager).
                     Include(o => o.Review).
                     Include(o => o.Services).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -61,11 +61,11 @@ namespace EService.Repositories
             List<Order> arr = new List<Order>();
             try
             {
-                arr = await Task.Run(() => _context.Orders.Where(o => o.CustomerId == customerId).
+                arr = await _context.Orders.Where(o => o.CustomerId == customerId).
                     Include(o => o.Customer).
                     Include(o => o.Manager).
                     Include(o => o.Review).
-                    Include(o => o.Services).ToListAsync());
+                    Include(o => o.Services).ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -79,12 +79,12 @@ namespace EService.Repositories
             List<Order> arr = new List<Order>();
             try
             {
-                arr = await Task.Run(() => _context.Orders.Where(o => o.ManagerId == managerId).
+                arr = await _context.Orders.Where(o => o.ManagerId == managerId).
                     Include(o => o.Customer).
                     Include(o => o.Manager).
                     Include(o => o.Review).
                     Include(o => o.Services).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }

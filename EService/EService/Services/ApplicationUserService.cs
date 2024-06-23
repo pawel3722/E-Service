@@ -210,16 +210,5 @@ namespace EService.Services
             servicesDto = _mapper.Map<List<ReturnServiceDto>>(order.Services);
             return await Task.FromResult((true, "", servicesDto));
         }
-        public async Task<(bool Confirmed, string Response, ReturnReviewDto? Review)> GetReviewFromOrderAsync(int id)
-        {
-            var user = await _applicationUserRepository.GetUserByIdAsync(Int32.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!));
-           
-            if (user == null) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "User with given id does not exist.", null));
-            var order = await _orderRepository.GetOrderByIdAsync(id);
-            if (order == null) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "Order with given id does not exist.", null));
-            if (user.Id != order.CustomerId) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "Order with given id does not belong to this user.", null));
-            var reviewDto = _mapper.Map<ReturnReviewDto>(order.Review);
-            return await Task.FromResult((true, "", reviewDto));
-        }
     }
 }

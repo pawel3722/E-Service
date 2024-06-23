@@ -24,9 +24,9 @@ namespace EService.Repositories
             Role? role = null;
             try
             {
-                role = await Task.Run(() => _context.Roles.Where(r => r.Name == name).
+                role = await _context.Roles.Where(r => r.Name == name).
                     Include(u => u.Users).
-                    FirstOrDefaultAsync());
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -40,14 +40,14 @@ namespace EService.Repositories
             ApplicationUser? usr = null;
             try
             {
-                usr = await Task.Run(() => _context.Users.Where(u => u.Id == id).
+                usr = await _context.Users.Where(u => u.Id == id).
                     Include(u => u.Roles).
-                    Include(u => u.SentMessages). //?
-                    Include(u => u.ReceivedMessages). //?
-                    Include(u => u.CustomerOrders). //?
-                    Include(u => u.ManagerOrders). //?
-                    Include(u => u.Services). //?
-                    FirstOrDefaultAsync());
+                    Include(u => u.SentMessages).
+                    Include(u => u.ReceivedMessages).
+                    Include(u => u.CustomerOrders).
+                    Include(u => u.ManagerOrders).
+                    Include(u => u.Services).
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -61,14 +61,14 @@ namespace EService.Repositories
             ApplicationUser? usr = null;
             try
             {
-                usr = await Task.Run(() => _context.Users.Where(u => u.Email == email).
+                usr = await _context.Users.Where(u => u.Email == email).
                     Include(u => u.Roles).
                     Include(u => u.SentMessages).
                     Include(u => u.ReceivedMessages).
                     Include(u => u.CustomerOrders).
                     Include(u => u.ManagerOrders).
                     Include(u => u.Services).
-                    FirstOrDefaultAsync());
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -82,14 +82,14 @@ namespace EService.Repositories
             ApplicationUser? usr = null;
             try
             {
-                usr = await Task.Run(() => _context.Users.Where(u => u.RefreshToken == refreshToken).
+                usr = await _context.Users.Where(u => u.RefreshToken == refreshToken).
                     Include(u => u.Roles).
                     Include(u => u.SentMessages).
                     Include(u => u.ReceivedMessages).
                     Include(u => u.CustomerOrders).
                     Include(u => u.ManagerOrders).
                     Include(u => u.Services).
-                    FirstOrDefaultAsync());
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -103,7 +103,7 @@ namespace EService.Repositories
             bool exists = false;
             try
             {
-                exists = await Task.Run(() => _context.Users.Where(u => u.Email == email).AnyAsync());
+                exists = await _context.Users.Where(u => u.Email == email).AnyAsync();
                 scope.Complete();
             }
             catch (Exception) { }

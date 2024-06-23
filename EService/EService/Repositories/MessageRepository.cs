@@ -22,10 +22,10 @@ namespace EService.Repositories
             Message? msg = null;
             try
             {
-                msg = await Task.Run(() => _context.Messages.Where(m => m.Id == id).
+                msg = await _context.Messages.Where(m => m.Id == id).
                     Include(m => m.ReceivingUser).
                     Include(m => m.SendingUser).
-                    FirstOrDefaultAsync());
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -39,10 +39,10 @@ namespace EService.Repositories
             List<Message> arr = new List<Message>();
             try
             {
-                arr = await Task.Run(() => _context.Messages.
+                arr = await _context.Messages.
                     Include(m => m.ReceivingUser).
                     Include(m => m.SendingUser).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -56,11 +56,11 @@ namespace EService.Repositories
             List<Message> arr = new List<Message>();
             try
             {
-                arr = await Task.Run(() => _context.Messages.
+                arr = await _context.Messages.
                     Where(m => m.SendingUserId == senderId && m.ReceivingUserId == receiverId).
                     Include(m => m.ReceivingUser).
                     Include(m => m.SendingUser).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -74,11 +74,11 @@ namespace EService.Repositories
             List<Message> arr = new List<Message>();
             try
             {
-                arr = await Task.Run(() => _context.Messages.
+                arr = await _context.Messages.
                     Where(m => m.SendingUserId == senderId).
                     Include(m => m.ReceivingUser).
                     Include(m => m.SendingUser).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -92,11 +92,11 @@ namespace EService.Repositories
             List<Message> arr = new List<Message>();
             try
             {
-                arr = await Task.Run(() => _context.Messages.
+                arr = await _context.Messages.
                     Where(m => m.ReceivingUserId == receiverId).
                     Include(m => m.ReceivingUser).
                     Include(m => m.SendingUser).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }

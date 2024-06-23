@@ -23,7 +23,7 @@ namespace EService.Services
         }
         public async Task<ReturnModelDto?> GetModelAsync(int id)
         {
-            var model = await _modelRepository.GetAllModelsAsync();
+            var model = await _modelRepository.GetModelByIdAsync(id);
             return _mapper.Map<ReturnModelDto>(model);
             //return await _modelRepository.GetModelByIdAsync(id);
         }

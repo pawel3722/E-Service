@@ -291,7 +291,8 @@ namespace EService.Services
             if(user == null) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "User with given id does not exist.", null));
             var order = await _orderRepository.GetOrderByIdAsync(id);
             if(order == null) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "Order with given id does not exist.", null));
-            if(user.Id != order.CustomerId) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "Order with given id does not belong to this user.", null));
+            if(order.Review == null) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "Review for this order does not exist.", null));
+            if (user.Id != order.CustomerId) return await Task.FromResult<(bool Confirmed, string Response, ReturnReviewDto? Review)>((false, "Order with given id does not belong to this user.", null));
             var reviewDto = _mapper.Map<ReturnReviewDto>(order.Review);
             return await Task.FromResult((true, "", reviewDto));
         }

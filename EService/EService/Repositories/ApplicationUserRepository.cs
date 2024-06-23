@@ -41,7 +41,7 @@ namespace EService.Repositories
             {
                 role = await _context.Roles.Where(r => r.Name == name).
                     Include(u => u.Users).
-                    FirstOrDefaultAsync());
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -55,9 +55,9 @@ namespace EService.Repositories
             List<Role> arr = new List<Role>();
             try
             {
-                arr = await Task.Run(() => _context.Roles.
+                arr = await _context.Roles.
                     Include(u => u.Users).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -71,14 +71,14 @@ namespace EService.Repositories
             ApplicationUser? usr = null;
             try
             {
-                usr = await Task.Run(() => _context.Users.Where(u => u.Id == id).
+                usr = await _context.Users.Where(u => u.Id == id).
                     Include(u => u.Roles).
                     Include(u => u.SentMessages).
                     Include(u => u.ReceivedMessages).
                     Include(u => u.ManagerOrders).
                     Include(u => u.CustomerOrders).
                     Include(u => u.Services).
-                    FirstOrDefaultAsync());
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -92,14 +92,14 @@ namespace EService.Repositories
             List<ApplicationUser> arr = new List<ApplicationUser>();
             try
             {
-                arr = await Task.Run(() => _context.Users.
+                arr = await _context.Users.
                     Include(u => u.Roles).
                     Include(u => u.SentMessages).
                     Include(u => u.ReceivedMessages).
                     Include(u => u.ManagerOrders).
                     Include(u => u.CustomerOrders).
                     Include(u => u.Services).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }

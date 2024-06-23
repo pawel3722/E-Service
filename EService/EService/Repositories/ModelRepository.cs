@@ -22,9 +22,9 @@ namespace EService.Repositories
             Model? model = null;
             try
             {
-                model = await Task.Run(() => _context.Models.Where(m => m.Name == name).
+                model = await _context.Models.Where(m => m.Name == name).
                     Include(m => m.Parts).
-                    FirstOrDefaultAsync());
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -38,9 +38,9 @@ namespace EService.Repositories
             Model? model = null;
             try
             {
-                model = await Task.Run(() => _context.Models.
+                model = await _context.Models.Where(m => m.Id == id).
                     Include(m => m.Parts).
-                    FirstOrDefaultAsync(m => m.Id == id));
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -54,9 +54,9 @@ namespace EService.Repositories
             List<Model> arr = new List<Model>();
             try
             {
-                arr = await Task.Run(() => _context.Models.
+                arr = await _context.Models.
                     Include(m => m.Parts).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }

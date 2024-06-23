@@ -25,6 +25,5 @@ namespace EService.Services.Interfaces
         public Task<(bool Confirmed, string Response, List<ReturnOrderDto>? Orders)> GetManagerOrdersAsync();
         public Task<(bool Confirmed, string Response, List<ReturnServiceDto>? Services)> GetClientServices(int? orderId);
         public Task<(bool Confirmed, string Response, List<ReturnServiceDto>? Services)> GetServicemanServices(int? orderId);
-        public Task<(bool Confirmed, string Response, ReturnReviewDto? Review)> GetReviewFromOrderAsync(int id);
     }
 }

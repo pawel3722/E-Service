@@ -22,10 +22,10 @@ namespace EService.Repositories
             Part? part = null;
             try
             {
-                part = await Task.Run(() => _context.Parts.
+                part = await _context.Parts.Where(p => p.Id == id).
                     Include(p => p.Service).
                     Include(p => p.Model).
-                    FirstOrDefaultAsync(p => p.Id == id));
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -39,10 +39,10 @@ namespace EService.Repositories
             Part? part = null;
             try
             {
-                part = await Task.Run(() => _context.Parts.Where(p => p.SerialNumber == serialNumber).
+                part = await _context.Parts.Where(p => p.SerialNumber == serialNumber).
                     Include(p => p.Service).
                     Include(p => p.Model).
-                    FirstOrDefaultAsync());
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -56,10 +56,10 @@ namespace EService.Repositories
             List<Part> arr = new List<Part>();
             try
             {
-                arr = await Task.Run(() => _context.Parts.
+                arr = await _context.Parts.
                     Include(p => p.Service).
                     Include(p => p.Model).
-                    ToListAsync());
+                    ToListAsync();
                 scope.Complete();
             }
             catch (Exception) { }

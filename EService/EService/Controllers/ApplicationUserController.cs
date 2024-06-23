@@ -15,11 +15,13 @@ namespace EService.Controllers
     {
         private readonly IApplicationUserService _applicationUserService;
         private readonly IServiceService _serviceService;
+        private readonly IOrderService _orderService;
 
-        public ApplicationUserController(IApplicationUserService applicationUserService, IServiceService serviceService)
+        public ApplicationUserController(IApplicationUserService applicationUserService, IServiceService serviceService, IOrderService orderService)
         { 
             _applicationUserService = applicationUserService;
             _serviceService = serviceService;
+            _orderService = orderService;
         }
 
 
@@ -75,7 +77,7 @@ namespace EService.Controllers
         [HttpGet("me/customer-orders/{id}/review"), Authorize(Roles = "Client")]
         public async Task<IActionResult> GetReview(int id)
         {
-            var result = await _applicationUserService.GetReviewFromOrderAsync(id);
+            var result = await _orderService.GetReviewFromOrderAsync(id);
             if (result.Confirmed)
                 return Ok(result.Review);
             else return BadRequest(result.Response);
