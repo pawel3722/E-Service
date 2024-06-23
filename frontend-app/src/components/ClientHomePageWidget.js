@@ -10,6 +10,7 @@ function ClientHomePageWidget() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    useEffect(() => {
       const getOrders = async () => {
         try {
           const response = await axiosPrivate.get('/api/ApplicationUser/me/customer-orders')
@@ -22,6 +23,8 @@ function ClientHomePageWidget() {
       }
 
     getOrders()
+    },[])
+
     var processingOrders = []
     var finishedOrders = []
     if(orders)
