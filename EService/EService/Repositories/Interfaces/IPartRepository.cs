@@ -9,7 +9,6 @@ namespace EService.Repositories.Interfaces
         public Task<Part?> GetPartBySerialNumber(string serialNumber);
         public Task<List<Part>> GetAllPartsAsync();
         public Task AddPartAsync(Part Part);
-        public Task SomethingAsync(int id, Service service);
         public Task RemovePartAsync(Part Part);
         public Task SaveChangesAsync();
     }

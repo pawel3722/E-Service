@@ -55,9 +55,7 @@ namespace EService.Repositories
             ApplicationUser? usr = null;
             try
             {
-                usr = await Task.Run(() => _context.Users.Where(u => u.Id == id).
-                                                           Include(u => u.Roles).
-                                                           FirstOrDefaultAsync());
+                usr = await Task.Run(() => _context.Users.Where(u => u.Id == id).Include(u => u.Roles).FirstOrDefaultAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -71,9 +69,7 @@ namespace EService.Repositories
             List<ApplicationUser> arr = new List<ApplicationUser>();
             try
             {
-                arr = await Task.Run(() => _context.Users.
-                                                    Include(m => m.Roles).
-                                                    ToListAsync());
+                arr = await Task.Run(() => _context.Users.Include(m => m.Roles).ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }

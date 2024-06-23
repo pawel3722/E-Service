@@ -43,6 +43,34 @@ namespace EService.Repositories
             catch (Exception) { }
             return await Task.Run(() => arr);
         }
+        public async Task<List<Order>> GetCustomerOrdersAsync(int customerId)
+        {
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            List<Order> arr = new List<Order>();
+            try
+            {
+                arr = await Task.Run(() => _context.Orders.Where(o => o.CustomerId == customerId).ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
+        }
+        public async Task<List<Order>> GetManagerOrdersAsync(int managerId)
+        {
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   TransactionScopeAsyncFlowOption.Enabled);
+            List<Order> arr = new List<Order>();
+            try
+            {
+                arr = await Task.Run(() => _context.Orders.Where(o => o.ManagerId == managerId).ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
+        }
         public async Task AddOrderAsync(Order order)
         {
             await _context.AddAsync(order);
