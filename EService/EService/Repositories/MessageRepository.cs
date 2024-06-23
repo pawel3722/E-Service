@@ -47,27 +47,57 @@ namespace EService.Repositories
         }
         public async Task<List<Message>> GetAllMessagesSentByToAsync(int senderId, int receiverId)
         {
-            return await Task.Run(() => _context.Messages.
-            Where(m => m.SendingUserId == senderId && m.ReceivingUserId == receiverId).
-            Include(m => m.ReceivingUser).
-            Include(m => m.SendingUser).
-            ToListAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            List<Message> arr = new List<Message>();
+            try
+            {
+                arr = await Task.Run(() => _context.Messages.
+                    Where(m => m.SendingUserId == senderId && m.ReceivingUserId == receiverId).
+                    Include(m => m.ReceivingUser).
+                    Include(m => m.SendingUser).
+                    ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task<List<Message>> GetAllMessagesSentByAsync(int senderId)
         {
-            return await Task.Run(() => _context.Messages.
-            Where(m => m.SendingUserId == senderId).
-            Include(m => m.ReceivingUser).
-            Include(m => m.SendingUser).
-            ToListAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            List<Message> arr = new List<Message>();
+            try
+            {
+                arr = await Task.Run(() => _context.Messages.
+                    Where(m => m.SendingUserId == senderId).
+                    Include(m => m.ReceivingUser).
+                    Include(m => m.SendingUser).
+                    ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task<List<Message>> GetAllMessagesSentToAsync(int receiverId)
         {
-            return await Task.Run(() => _context.Messages.
-            Where(m => m.ReceivingUserId == receiverId).
-            Include(m => m.ReceivingUser).
-            Include(m => m.SendingUser).
-            ToListAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            List<Message> arr = new List<Message>();
+            try
+            {
+                arr = await Task.Run(() => _context.Messages.
+                    Where(m => m.ReceivingUserId == receiverId).
+                    Include(m => m.ReceivingUser).
+                    Include(m => m.SendingUser).
+                    ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task AddMessageAsync(Message message)
         {

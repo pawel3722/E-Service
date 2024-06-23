@@ -45,7 +45,17 @@ namespace EService.Repositories
         }
         public async Task<List<Role>> GetAllRolesAsync()
         {
-            return await Task.Run(() => _context.Roles.ToListAsync());
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                                                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                    TransactionScopeAsyncFlowOption.Enabled);
+            List<Role> arr = new List<Role>();
+            try
+            {
+                arr = await Task.Run(() => _context.Roles.ToListAsync());
+                scope.Complete();
+            }
+            catch (Exception) { }
+            return await Task.Run(() => arr);
         }
         public async Task<ApplicationUser?> GetUserByIdAsync(int id)
         {
