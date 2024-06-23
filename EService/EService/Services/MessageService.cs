@@ -1,4 +1,6 @@
-﻿using Azure.Core;
+﻿using AutoMapper;
+using Azure.Core;
+using EService.Dtos.ApplicationUserDtos;
 using EService.Dtos.MessageDtos;
 using EService.Models;
 using EService.Repositories.Interfaces;
@@ -12,19 +14,26 @@ namespace EService.Services
         private readonly IMessageRepository _messageRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IApplicationUserRepository _applicationUserRepository;
-        public MessageService(IMessageRepository messageRepository, IHttpContextAccessor contextAccessor, IApplicationUserRepository applicationUserRepository)
+        private readonly IMapper _mapper;
+
+        public MessageService(IMessageRepository messageRepository, IHttpContextAccessor contextAccessor, IApplicationUserRepository applicationUserRepository, IMapper mapper)
         {
             _messageRepository = messageRepository;
             _httpContextAccessor = contextAccessor;
             _applicationUserRepository = applicationUserRepository;
+            _mapper = mapper;
         }
-        public async Task<List<Message>> GetAllMessagesAsync()
+        public async Task<List<ReturnMessageDto>> GetAllMessagesAsync()
         {
-            return await _messageRepository.GetAllMessagesAsync();
+            var messages = await _messageRepository.GetAllMessagesAsync();
+            return _mapper.Map<List<ReturnMessageDto>>(messages);
+           // return await _messageRepository.GetAllMessagesAsync();
         }
-        public async Task<Message?> GetMessageAsync(int id)
+        public async Task<ReturnMessageDto?> GetMessageAsync(int id)
         {
-            return await _messageRepository.GetMessageByIdAsync(id);
+            var message = await _messageRepository.GetMessageByIdAsync(id);
+            return _mapper.Map<ReturnMessageDto>(message);
+            //return await _messageRepository.GetMessageByIdAsync(id);
         }
         public async Task<(bool Confirmed, string Response)> CreateMessageAsync(CreateMessageDto request)
         {

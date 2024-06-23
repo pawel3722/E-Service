@@ -24,13 +24,13 @@ namespace EService.Models
         /*[InverseProperty("RoleId")]*/
         public List<Role> Roles { get; set; } = new List<Role>();
 
-        [InverseProperty("SendingUser"), JsonIgnore]
+        [InverseProperty("SendingUser")]
         public List<Message> SentMessages { get; set; } = new List<Message>();
-        [InverseProperty("ReceivingUser"), JsonIgnore]
+        [InverseProperty("ReceivingUser")]
         public List<Message> ReceivedMessages { get; set; } = new List<Message>();
-        [InverseProperty("Customer"), JsonIgnore]
+        [InverseProperty("Customer")]
         public List<Order> CustomerOrders { get; set; } = new List<Order>();
-        [InverseProperty("Manager"), JsonIgnore]
+        [InverseProperty("Manager")]
         public List<Order> ManagerOrders { get; set; } = new List<Order>();
         [InverseProperty("Serviceman")]
         public List<Service> Services { get; set; } = new List<Service>();

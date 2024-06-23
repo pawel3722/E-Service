@@ -23,7 +23,12 @@ namespace EService.Repositories
             Order? order = null;
             try
             {
-                order = await Task.Run(() => _context.Orders.FirstOrDefaultAsync(o => o.Id == id));
+                order = await Task.Run(() => _context.Orders.
+                    Include(o => o.Customer).
+                    Include(o => o.Manager).
+                    Include(o => o.Review).
+                    Include(o => o.Services).
+                    FirstOrDefaultAsync(o => o.Id == id));
                 scope.Complete();
             }
             catch (Exception) { }
@@ -37,7 +42,12 @@ namespace EService.Repositories
             List<Order> arr = new List<Order>();
             try
             {
-                arr = await Task.Run(() => _context.Orders.ToListAsync());
+                arr = await Task.Run(() => _context.Orders.
+                    Include(o => o.Customer).
+                    Include(o => o.Manager).
+                    Include(o => o.Review).
+                    Include(o => o.Services).
+                    ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -51,7 +61,11 @@ namespace EService.Repositories
             List<Order> arr = new List<Order>();
             try
             {
-                arr = await Task.Run(() => _context.Orders.Where(o => o.CustomerId == customerId).ToListAsync());
+                arr = await Task.Run(() => _context.Orders.Where(o => o.CustomerId == customerId).
+                    Include(o => o.Customer).
+                    Include(o => o.Manager).
+                    Include(o => o.Review).
+                    Include(o => o.Services).ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -65,7 +79,12 @@ namespace EService.Repositories
             List<Order> arr = new List<Order>();
             try
             {
-                arr = await Task.Run(() => _context.Orders.Where(o => o.ManagerId == managerId).ToListAsync());
+                arr = await Task.Run(() => _context.Orders.Where(o => o.ManagerId == managerId).
+                    Include(o => o.Customer).
+                    Include(o => o.Manager).
+                    Include(o => o.Review).
+                    Include(o => o.Services).
+                    ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }

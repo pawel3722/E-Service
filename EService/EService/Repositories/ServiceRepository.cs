@@ -22,7 +22,12 @@ namespace EService.Repositories
             Service? serv = null;
             try
             {
-                serv = await Task.Run(() => _context.Services.FirstOrDefaultAsync(s => s.Id == id));
+                serv = await Task.Run(() => _context.Services.
+                    Include(s => s.Serviceman).
+                    Include(s => s.Order).
+                    Include(s => s.ServiceType).
+                    Include(s => s.Part).
+                    FirstOrDefaultAsync(s => s.Id == id));
                 scope.Complete();
             }
             catch (Exception) { }
@@ -36,7 +41,12 @@ namespace EService.Repositories
             List<Service> arr = new List<Service>();
             try
             {
-                arr = await Task.Run(() => _context.Services.ToListAsync());
+                arr = await Task.Run(() => _context.Services.
+                    Include(s => s.Serviceman).
+                    Include(s => s.Order).
+                    Include(s => s.ServiceType).
+                    Include(s => s.Part).
+                    ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }

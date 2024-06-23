@@ -23,7 +23,9 @@ namespace EService.Repositories
             Role? role = null;
             try
             {
-                role = await _context.Roles.Where(r => r.Id == id).FirstOrDefaultAsync();
+                role = await _context.Roles.Where(r => r.Id == id).
+                    Include(u => u.Users).
+                    FirstOrDefaultAsync();
                 scope.Complete();
             }
             catch (Exception) { }
@@ -37,7 +39,9 @@ namespace EService.Repositories
             Role? role = null;
             try
             {
-                role = await _context.Roles.Where(r => r.Name == name).FirstOrDefaultAsync();
+                role = await _context.Roles.Where(r => r.Name == name).
+                    Include(u => u.Users).
+                    FirstOrDefaultAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -51,7 +55,9 @@ namespace EService.Repositories
             List<Role> arr = new List<Role>();
             try
             {
-                arr = await Task.Run(() => _context.Roles.ToListAsync());
+                arr = await Task.Run(() => _context.Roles.
+                    Include(u => u.Users).
+                    ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -65,7 +71,14 @@ namespace EService.Repositories
             ApplicationUser? usr = null;
             try
             {
-                usr = await Task.Run(() => _context.Users.Where(u => u.Id == id).Include(u => u.Roles).FirstOrDefaultAsync());
+                usr = await Task.Run(() => _context.Users.Where(u => u.Id == id).
+                    Include(u => u.Roles).
+                    Include(u => u.SentMessages).
+                    Include(u => u.ReceivedMessages).
+                    Include(u => u.ManagerOrders).
+                    Include(u => u.CustomerOrders).
+                    Include(u => u.Services).
+                    FirstOrDefaultAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -79,7 +92,14 @@ namespace EService.Repositories
             List<ApplicationUser> arr = new List<ApplicationUser>();
             try
             {
-                arr = await Task.Run(() => _context.Users.Include(m => m.Roles).ToListAsync());
+                arr = await Task.Run(() => _context.Users.
+                    Include(u => u.Roles).
+                    Include(u => u.SentMessages).
+                    Include(u => u.ReceivedMessages).
+                    Include(u => u.ManagerOrders).
+                    Include(u => u.CustomerOrders).
+                    Include(u => u.Services).
+                    ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }

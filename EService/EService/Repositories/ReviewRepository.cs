@@ -22,7 +22,9 @@ namespace EService.Repositories
             Review? review = null;
             try
             {
-                review = await Task.Run(() => _context.Reviews.FirstOrDefaultAsync(r => r.Id == id));
+                review = await Task.Run(() => _context.Reviews.
+                    Include(r => r.Order).
+                    FirstOrDefaultAsync(r => r.Id == id));
                 scope.Complete();
             }
             catch (Exception) { }
@@ -36,7 +38,9 @@ namespace EService.Repositories
             List<Review> arr = new List<Review>();
             try
             {
-                arr = await Task.Run(() => _context.Reviews.ToListAsync());
+                arr = await Task.Run(() => _context.Reviews.
+                    Include(r => r.Order).
+                    ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }

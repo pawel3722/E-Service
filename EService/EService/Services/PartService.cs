@@ -1,5 +1,8 @@
-﻿using EService.Dtos.PartDtos;
+﻿using AutoMapper;
+using EService.Dtos.ApplicationUserDtos;
+using EService.Dtos.PartDtos;
 using EService.Models;
+using EService.Repositories;
 using EService.Repositories.Interfaces;
 
 namespace EService.Services
@@ -8,19 +11,25 @@ namespace EService.Services
     {
         private readonly IPartRepository _partRepository;
         private readonly IModelRepository _modelRepository;
-        public PartService(IPartRepository partRepository, IModelRepository modelRepository)
+        private readonly IMapper _mapper;
+        public PartService(IPartRepository partRepository, IModelRepository modelRepository, IMapper mapper)
         {
             _partRepository = partRepository;
             _modelRepository = modelRepository;
+            _mapper = mapper;
         }
 
-        public async Task<List<Part>> GetAllPartsAsync()
+        public async Task<List<ReturnPartDto>> GetAllPartsAsync()
         {
-            return await _partRepository.GetAllPartsAsync();
+            var parts = await _partRepository.GetAllPartsAsync();
+            return _mapper.Map<List<ReturnPartDto>>(parts);
+           // return await _partRepository.GetAllPartsAsync();
         }
-        public async Task<Part?> GetPartAsync(int id)
+        public async Task<ReturnPartDto?> GetPartAsync(int id)
         {
-            return await _partRepository.GetPartByIdAsync(id);
+            var part = await _partRepository.GetPartByIdAsync(id);
+            return _mapper.Map<ReturnPartDto>(part);
+            //return await _partRepository.GetPartByIdAsync(id);
         }
         public async Task<(bool Confirmed, string Response)> CreatePartAsync(CreatePartDto request)
         {

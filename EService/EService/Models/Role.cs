@@ -9,7 +9,7 @@ namespace EService.Models
         public string Name { get; set; }
 
         /*[InverseProperty("UserId")]*/
-        [JsonIgnore]
+        //[JsonIgnore]
         public List<ApplicationUser> Users { get; set; } = new List<ApplicationUser>();
 
     }

@@ -22,7 +22,10 @@ namespace EService.Repositories
             Message? msg = null;
             try
             {
-                msg = await Task.Run(() => _context.Messages.FirstOrDefaultAsync(m => m.Id == id));
+                msg = await Task.Run(() => _context.Messages.Where(m => m.Id == id).
+                    Include(m => m.ReceivingUser).
+                    Include(m => m.SendingUser).
+                    FirstOrDefaultAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -37,9 +40,9 @@ namespace EService.Repositories
             try
             {
                 arr = await Task.Run(() => _context.Messages.
-                                                    Include(m => m.ReceivingUser).
-                                                    Include(m => m.SendingUser).
-                                                    ToListAsync());
+                    Include(m => m.ReceivingUser).
+                    Include(m => m.SendingUser).
+                    ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }

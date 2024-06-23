@@ -1,4 +1,5 @@
-﻿using EService.Dtos.ModelDtos;
+﻿using AutoMapper;
+using EService.Dtos.ModelDtos;
 using EService.Dtos.PartDtos;
 using EService.Models;
 using EService.Repositories.Interfaces;
@@ -8,17 +9,23 @@ namespace EService.Services
     public class ModelService : IModelService
     {
         private readonly IModelRepository _modelRepository;
-        public ModelService(IModelRepository modelRepository)
+        private readonly IMapper _mapper;
+        public ModelService(IModelRepository modelRepository, IMapper mapper)
         {
             _modelRepository = modelRepository;
+            _mapper = mapper;
         }
-        public async Task<List<Model>> GetAllModelsAsync()
+        public async Task<List<ReturnModelDto>> GetAllModelsAsync()
         {
-            return await _modelRepository.GetAllModelsAsync();
+            var models = await _modelRepository.GetAllModelsAsync();
+            return _mapper.Map<List<ReturnModelDto>>(models);
+            //return await _modelRepository.GetAllModelsAsync();
         }
-        public async Task<Model?> GetModelAsync(int id)
+        public async Task<ReturnModelDto?> GetModelAsync(int id)
         {
-            return await _modelRepository.GetModelByIdAsync(id);
+            var model = await _modelRepository.GetAllModelsAsync();
+            return _mapper.Map<ReturnModelDto>(model);
+            //return await _modelRepository.GetModelByIdAsync(id);
         }
         public async Task<(bool Confirmed, string Response)> CreateModelAsync(CreateModelDto request)
         {

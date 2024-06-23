@@ -1,8 +1,8 @@
-﻿using System.Text.Json.Serialization;
+﻿using EService.Models;
 
-namespace EService.Models
+namespace EService.Dtos.ServiceDtos
 {
-    public class Service
+    public class FieldsOnlyServiceDto
     {
         public int Id { get; set; }
         // 0 -> Utworzono
@@ -15,21 +15,14 @@ namespace EService.Models
         public double PartPrice { get; set; }
         public double ServicePrice { get; set; }
 
+        //ID ZOSTAWIC?
         public int? ServicemanId { get; set; }
-        public ApplicationUser? Serviceman { get; set; }
 
         public int OrderId { get; set; }
-        //[JsonIgnore]
-        public Order Order { get; set; }
-
+       
         public int ServiceTypeId { get; set; }
-        //[JsonIgnore]
-        public ServiceType ServiceType { get; set; }
-
+  
         public int? PartId { get; set; }
-        //[JsonIgnore]
-        public Part? Part { get; set; }
 
-        public Service() { }
     }
 }

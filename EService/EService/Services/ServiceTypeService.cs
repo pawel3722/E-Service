@@ -1,6 +1,9 @@
-﻿using Azure.Core;
+﻿using AutoMapper;
+using Azure.Core;
+using EService.Dtos.ServiceDtos;
 using EService.Dtos.ServiceTypeDtos;
 using EService.Models;
+using EService.Repositories;
 using EService.Repositories.Interfaces;
 
 namespace EService.Services
@@ -8,17 +11,23 @@ namespace EService.Services
     public class ServiceTypeService : IServiceTypeService
     {
         private readonly IServiceTypeRepository _serviceTypeRepository;
-        public ServiceTypeService(IServiceTypeRepository serviceTypeRepository) 
+        private readonly IMapper _mapper;
+        public ServiceTypeService(IServiceTypeRepository serviceTypeRepository, IMapper mapper) 
         { 
             _serviceTypeRepository = serviceTypeRepository;
+            _mapper = mapper;
         }
-        public async Task<List<ServiceType>> GetAllServiceTypesAsync()
+        public async Task<List<ReturnServiceTypeDto>> GetAllServiceTypesAsync()
         {
-            return await _serviceTypeRepository.GetAllServiceTypesAsync();
+            var review = await _serviceTypeRepository.GetAllServiceTypesAsync();
+            return _mapper.Map<List<ReturnServiceTypeDto>>(review);
+            //return await _serviceTypeRepository.GetAllServiceTypesAsync();
         }
-        public async Task<ServiceType?> GetServiceTypeAsync(int id)
+        public async Task<ReturnServiceTypeDto?> GetServiceTypeAsync(int id)
         {
-            return await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
+            var review = await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
+            return _mapper.Map<ReturnServiceTypeDto>(review);
+           // return await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
         }
         public async Task<(bool Confirmed, string Response)> CreateServiceTypeAsync(CreateServiceTypeDto request)
         {

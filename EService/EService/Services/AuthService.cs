@@ -1,4 +1,6 @@
-﻿using EService.Dtos.AuthDtos;
+﻿using AutoMapper;
+using EService.Dtos.ApplicationUserDtos;
+using EService.Dtos.AuthDtos;
 using EService.Dtos.MessageDtos;
 using EService.Dtos.RolesDtos;
 using EService.Models;
@@ -16,17 +18,21 @@ namespace EService.Services
         private readonly IAuthRepository _authRepository;
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMapper _mapper;
 
-        public AuthService(IAuthRepository authRepository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IAuthRepository authRepository, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _authRepository = authRepository;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
         
-        public async Task<ApplicationUser?> GetUserAsync(int id)
+        public async Task<ReturnApplicationUserDto?> GetUserAsync(int id)
         {
-            return await _authRepository.GetUserByIdAsync(id);
+            var user = await _authRepository.GetUserByIdAsync(id);
+            var userDto = _mapper.Map<ReturnApplicationUserDto>(user);
+            return userDto;
         }
         public async Task<(bool Confirmed, string Response)> RegisterUserAsync(UserRegisterRequestDto request)
         {

@@ -23,7 +23,9 @@ namespace EService.Repositories
             ServiceType? servType = null;
             try
             {
-                servType = await Task.Run(() => _context.ServiceTypes.Where(s => s.Name == name).FirstOrDefaultAsync());
+                servType = await Task.Run(() => _context.ServiceTypes.Where(s => s.Name == name).
+                    Include(s => s.Services).
+                    FirstOrDefaultAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -37,7 +39,9 @@ namespace EService.Repositories
             ServiceType? servType = null;
             try
             {
-                servType = await Task.Run(() => _context.ServiceTypes.FirstOrDefaultAsync(st => st.Id == id));
+                servType = await Task.Run(() => _context.ServiceTypes.Where(st => st.Id == id).
+                    Include(s => s.Services).
+                    FirstOrDefaultAsync());
                 scope.Complete();
             }
             catch (Exception) { }
@@ -51,7 +55,9 @@ namespace EService.Repositories
             List<ServiceType> arr = new List<ServiceType>();
             try
             {
-                arr = await Task.Run(() => _context.ServiceTypes.ToListAsync());
+                arr = await Task.Run(() => _context.ServiceTypes.
+                    Include(s => s.Services).
+                    ToListAsync());
                 scope.Complete();
             }
             catch (Exception) { }
