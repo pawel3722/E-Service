@@ -3,37 +3,83 @@ import { useState, useEffect } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
 
-// function getServiceType(id, axiosPrivate, location, navigate) {
-//   try {
-//     const response = axiosPrivate.get('/api/ServiceType/' + id)
-//     console.log(response.data)
-//     return response.data
-//   } catch (err) {
-//     console.error(err)
-//     navigate('/log', { state: { from: location }, replace: true })
-//   }
-// }
-
 function ClientOrders() {
   const [serviceTypes, setServiceTypes] = useState([])
   const [orders, setOrders] = useState()
   const [reviews, setReview] = useState([])
+  const [formValue, setformValue] = React.useState({
+    'rating' : 0,
+    'comment' : ''
+  });
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const getReview = async (id) => {
+  async function addReview(id) {
+    // store the states in the form data
+    const loginFormData = new FormData();
+    loginFormData.append("rating", formValue.rating)
+    loginFormData.append("comment", formValue.comment)
+
+    var rating = formValue.rating
+    var comment = formValue.comment
+    var orderId = id
+
+    if(rating > 0 && rating < 6 && comment !== '') {
+      try {
+        // make axios post request
+       await axiosPrivate.post('api/Review',
+          JSON.stringify({ rating, comment, orderId }),
+          {
+              headers: { 'Content-Type': 'application/json' },
+              withCredentials: true
+          }
+        );
+      } catch(error) {
+        console.log(error)
+      }
+    }
+  }
+
+  async function updateReview(oid,rid) {
+    // store the states in the form data
+    var rating = formValue.rating
+    var comment = formValue.comment
+    var orderId = oid
+
+    if(rating > 0 && rating < 6 && comment !== '') {
+      try {
+        // make axios post request
+        await axiosPrivate.put('api/Review/' + rid,
+          JSON.stringify({ rating, comment, orderId }),
+          {
+              headers: { 'Content-Type': 'application/json' },
+              withCredentials: true
+          }
+        );
+      } catch(error) {
+        console.log(error)
+      }
+    }
+  }
+
+  async function handleChange(event) {
+    setformValue({
+      ...formValue,
+      [event.target.name]: event.target.value
+    });
+    console.log('handle')
+  }  
+
+  useEffect(() => {
+    const getReview = async (id) => {
       try {
         const response = await axiosPrivate.get('/api/ApplicationUser/me/customer-orders/' + id + '/review')
-        // console.log(response.data)  
-        setReview([
-          ...reviews,
-          response.data
-        ]);
+        console.log(response.data)  
+        setReview(previousState => [...previousState,response.data]);
       } catch (err) {}
   }
 
-  useEffect(() => {
     const getServiceTypes = async () => {
       try {
         const response = await axiosPrivate.get('/api/ServiceType/')
@@ -50,7 +96,8 @@ function ClientOrders() {
     const getOrders = async () => {
         try {
           const response = await axiosPrivate.get('/api/ApplicationUser/me/customer-orders')
-          console.log(response.data)   
+          console.log(response.data)
+          response.data.map((o) => getReview(o.id)) 
           setOrders(response.data)
         } catch (err) {
           console.error(err)
@@ -60,23 +107,24 @@ function ClientOrders() {
 
     getOrders()
     getServiceTypes()
+
+    
   }, [])
+
+  console.log(reviews)
 
  var myOrders = []
  var myReviews = []
+ var myServiceTypes = []
 
- if(reviews ) {
-  myReviews = reviews   
+ if(orders) {
+  myOrders = orders
 }
 
-  if(orders) {
-    myOrders = orders
-    orders.map((o) => getReview(o.id))
+  if(reviews ) {
+    myReviews = reviews   
   }
-
-
-
-  var myServiceTypes = []
+  
   if(serviceTypes) {
     myServiceTypes = serviceTypes
   }
@@ -107,10 +155,31 @@ function ClientOrders() {
                         : o.status === 2 ? "Oczekiwanie na część" : "Ukończono"}
                       </li>
                     )}
-                    Ocena: { !myReviews ? "Ładowanie" : myReviews.find((r) => r.orderId === o.id) ? myReviews.find((r) => r.orderId === o.id).rating : "Brak"} <br></br>
-                    Komentarz: { !myReviews ? "Ładowanie" : myReviews.find((r) => r.orderId === o.id) ? myReviews.find((r) => r.orderId === o.id).comment : "Brak"}<br></br>
+                    { !myReviews ? "Ładowanie" : myReviews.find((r) => r.orderId === o.id) ?
+                    (
+                      <p>
+                      Ocena: {myReviews.find((r) => r.orderId === o.id).rating}<br></br>              
+                      Komentarz: {myReviews.find((r) => r.orderId === o.id).comment}
+                      </p>
+                    ) : (
+                      <form onSubmit={() => addReview(o.id)}>
+                      <label>Ocena:</label><br></br>
+                      <input  type="number" 
+                              id="rating" 
+                              name="rating" 
+                              onInput={handleChange}
+                      /><br></br>
+                      <label>Komentarz:</label><br></br>
+                      <input  type="text" 
+                              id="comment" 
+                              name="comment" 
+                              onInput={handleChange}
+                      /><br></br>
+                      <input type="submit" value="Zapisz"></input>
+                    </form>
+                    )}
                     </p>
-                ))
+                  )) 
                 : <p>Ładowanie...</p>
             }
       
