@@ -12,9 +12,9 @@ function Home() {
             <Navbar />
             <h1 className='title'>Servelectro</h1>
             <article>
-            Witajcie w naszym zespole serwisu elektronicznego! 
-            Jesteśmy zgrupowaniem pasjonatów technologii i innowacji, którzy połączyli swoje umiejętności, 
-            wiedzę i doświadczenie, aby dostarczać Wam najlepsze treści i usługi w świecie elektroniki.
+                Witajcie w naszym zespole serwisu elektronicznego!
+                Jesteśmy zgrupowaniem pasjonatów technologii i innowacji, którzy połączyli swoje umiejętności,
+                wiedzę i doświadczenie, aby dostarczać Wam najlepsze treści i usługi w świecie elektroniki.
             </article>
             <div className='main'>
                 <div className='info'>

@@ -1,8 +1,9 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import ClientHomePageWidget from '../components/ClientHomePageWidget';
+import NavbarUser from '../components/NavbarUser';
 
 function UserPage() {
   const [users, setUsers] = useState();
@@ -51,7 +52,7 @@ function UserPage() {
 
   return (
     <>
-    
+      <NavbarUser />
       <div>UserPage</div>
       {
         users
@@ -64,6 +65,7 @@ function UserPage() {
           )
           : <p>Brak roli</p>
       }
+      <Outlet />
            
       </>
   )

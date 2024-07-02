@@ -21,8 +21,9 @@ function App() {
 
         <Route element={<PersistLogin />}>
           <Route element={<ProtectedRoutes />} >
-            <Route path='user' element={<UserPage />} />
-            <Route path='client-orders' element={<ClientOrders />} />
+            <Route path='user' element={<UserPage />} >
+              <Route path='client-orders' element={<ClientOrders />} />
+            </Route>
           </Route>
         </Route>
 
