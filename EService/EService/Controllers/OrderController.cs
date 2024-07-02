@@ -27,7 +27,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet, Authorize(Roles = "Admin,Manager")]
+        [HttpGet, Authorize(Roles = "Admin,Manager,Seller")]
         public async Task<IActionResult> Get()
         {
             var result = await _orderService.GetAllOrdersAsync();
