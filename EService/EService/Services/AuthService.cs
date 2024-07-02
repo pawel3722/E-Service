@@ -136,7 +136,7 @@ namespace EService.Services
         }
         private (string Token, DateTime CreatedAt, DateTime Expires) GenerateRefreshToken()
         {
-            return (Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)), DateTime.Now, DateTime.Now.AddSeconds(60000));
+            return (Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)), DateTime.Now, DateTime.Now.AddHours(24));
         }
         private void SetRefreshTokenInResponse((string Token, DateTime CreatedAt, DateTime Expires) refreshToken)
         {

@@ -53,7 +53,7 @@ function ClientHomePageWidget() {
                   ))
                 : <p>Brak zamowien</p>
             }
-            <button onClick={() => navigate('/client-orders')}>Moje zamowienia</button>
+            <button onClick={() => navigate('/user/client-orders', { state: { from: location }, replace: true })}>Moje zamowienia</button>
         </>
       )
 }
