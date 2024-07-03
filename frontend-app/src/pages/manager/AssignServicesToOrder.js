@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
 
-function ClientOrders() {
+function AssignServicesToOrder() {
   const [serviceTypes, setServiceTypes] = useState([])
   const [orders, setOrders] = useState([])
   const [reviews, setReview] = useState([])
@@ -36,28 +36,6 @@ function ClientOrders() {
     }
   }
 
-  // async function updateReview(oid, rid) {
-  //   // store the states in the form data
-  //   var rating = formValue.rating
-  //   var comment = formValue.comment
-  //   var orderId = oid
-
-  //   if (rating > 0 && rating < 6 && comment !== '') {
-  //     try {
-  //       // make axios post request
-  //       await axiosPrivate.put('api/Review/' + rid,
-  //         JSON.stringify({ rating, comment, orderId }),
-  //         {
-  //           headers: { 'Content-Type': 'application/json' },
-  //           withCredentials: true
-  //         }
-  //       );
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-  // }
-
   async function handleChange(event) {
     setformValue({
       ...formValue,
@@ -66,14 +44,6 @@ function ClientOrders() {
   }
 
   useEffect(() => {
-    const getReview = async (id) => {
-      try {
-        const response = await axiosPrivate.get('/api/ApplicationUser/me/customer-orders/' + id + '/review')
-        console.log(response.data)
-        setReview(previousState => [...previousState, response.data]);
-      } catch (err) { }
-    }
-
     const getServiceTypes = async () => {
       try {
         const response = await axiosPrivate.get('/api/ServiceType/')
@@ -87,9 +57,8 @@ function ClientOrders() {
 
     const getOrders = async () => {
       try {
-        const response = await axiosPrivate.get('/api/ApplicationUser/me/customer-orders')
+        const response = await axiosPrivate.get('/api/ApplicationUser/me/manager-orders')
         console.log(response.data)
-        response.data.map((o) => getReview(o.id))
         setOrders(response.data)
       } catch (err) {
         console.error(err)
@@ -127,29 +96,7 @@ function ClientOrders() {
                         : s.status === 2 ? "Oczekiwanie na część" : "Ukończono"}
                   </li>
                 )}
-                {!reviews ? "Ładowanie" : reviews.find((r) => r.orderId === o.id) ?
-                  (
-                    <p>
-                      Ocena: {reviews.find((r) => r.orderId === o.id).rating}<br></br>
-                      Komentarz: {reviews.find((r) => r.orderId === o.id).comment}
-                    </p>
-                  ) : o.status !== 5 ? "" : (
-                    <form onSubmit={() => addReview(o.id)}>
-                      <label>Ocena:</label><br></br>
-                      <input type="number"
-                        id="rating"
-                        name="rating"
-                        onInput={handleChange}
-                      /><br></br>
-                      <label>Komentarz:</label><br></br>
-                      <input type="text"
-                        id="comment"
-                        name="comment"
-                        onInput={handleChange}
-                      /><br></br>
-                      <input type="submit" value="Zapisz"></input>
-                    </form>
-                  )}
+                <button onClick={ () => navigate('/user/new-service/' + o.id, { state: { from: location }, replace: true }) }>Dodaj</button>
               </p>
             ))
           : <p>Ładowanie...</p>
@@ -159,4 +106,4 @@ function ClientOrders() {
   )
 }
 
-export default ClientOrders
+export default AssignServicesToOrder

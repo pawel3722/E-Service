@@ -12,6 +12,15 @@ import HomePageWidget from './components/HomePageWidget';
 import NewOrder from './pages/seller/NewOrder'
 import DeliverOrder from './pages/seller/DeliverOrder'
 import PayForOrder from './pages/seller/PayForOrder';
+import AssignManagerToOrder from './pages/manager/AssignManagerToOrder';
+import ServiceTypes from './pages/manager/service-types/ServiceTypes';
+import NewServiceType from './pages/manager/service-types/NewServiceType'
+import EditServiceType from './pages/manager/service-types/EditServiceType'
+import DeleteServiceType from './pages/manager/service-types/DeleteServiceType'
+import AssignServicesToOrder from './pages/manager/AssignServicesToOrder';
+import AssignWorkerToService from './pages/manager/AssignWorkerToService'
+import NewService from './pages/manager/NewService';
+
 
 function App() {
   return (
@@ -31,6 +40,14 @@ function App() {
               <Route path='new-order' element={<NewOrder />} />
               <Route path='deliver-order' element={<DeliverOrder />} />
               <Route path='pay-for-order' element={<PayForOrder />} />
+              <Route path='assign-manager-to-order' element={<AssignManagerToOrder />} />
+              <Route path='service-types' element={<ServiceTypes />} />
+              <Route path='new-service-type' element={<NewServiceType />} />
+              <Route path='edit-service-type/:id' element={<EditServiceType />} />
+              <Route path='delete-service-type/:id' element={<DeleteServiceType />} />
+              <Route path='assign-worker-to-service' element={<AssignWorkerToService />} />
+              <Route path='assign-services-to-order' element={<AssignServicesToOrder />} />
+              <Route path='new-service/:id' element={<NewService />} />
             </Route>
           </Route>
         </Route>

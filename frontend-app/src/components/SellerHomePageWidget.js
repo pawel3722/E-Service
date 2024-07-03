@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 
-function ClientHomePageWidget() {
+function SellerHomePageWidget() {
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,4 +22,4 @@ function ClientHomePageWidget() {
       )
 }
 
-export default ClientHomePageWidget
+export default SellerHomePageWidget
