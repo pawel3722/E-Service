@@ -6,41 +6,24 @@ import { useNavigate, useLocation } from "react-router-dom";
 function AssignServicesToOrder() {
   const [serviceTypes, setServiceTypes] = useState([])
   const [orders, setOrders] = useState([])
-  const [reviews, setReview] = useState([])
-  const [formValue, setformValue] = React.useState({
-    'rating': 0,
-    'comment': ''
-  });
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
 
-  async function addReview(id) {
-    var rating = formValue.rating
-    var comment = formValue.comment
-    var orderId = id
-
-    if (rating >= 1 && rating <= 5 && comment !== '') {
-      try {
-        // make axios post request
-        await axiosPrivate.post('api/Review',
-          JSON.stringify({ rating, comment, orderId }),
-          {
-            headers: { 'Content-Type': 'application/json' },
-            withCredentials: true
-          }
-        );
-      } catch (error) {
-        console.log(error)
-      }
+  async function updateStatus(id) {
+    var status = 2
+    try {
+      // make axios post request
+      await axiosPrivate.put('/api/Order/' + id + '/status',
+        JSON.stringify({ status }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+    } catch (error) {
+      console.log(error)
     }
-  }
-
-  async function handleChange(event) {
-    setformValue({
-      ...formValue,
-      [event.target.name]: event.target.value
-    });
   }
 
   useEffect(() => {
@@ -97,6 +80,7 @@ function AssignServicesToOrder() {
                   </li>
                 )}
                 <button onClick={ () => navigate('/user/new-service/' + o.id, { state: { from: location }, replace: true }) }>Dodaj</button>
+                <button onClick={ () => updateStatus(o.id) }>Zmień status</button>
               </p>
             ))
           : <p>Ładowanie...</p>

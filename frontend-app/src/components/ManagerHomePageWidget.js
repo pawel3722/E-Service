@@ -16,9 +16,9 @@ function ManagerHomePageWidget() {
         <>
             <div>Widżet strony głównej w przygotowaniu.</div>
             <button onClick={() => navigate('/user/assign-manager-to-order', { state: { from: location }, replace: true })}>Przypisz menedżera</button>
-            <button onClick={() => navigate('/user/assign-services-to-order', { state: { from: location }, replace: true })}>Przypisz usługi</button>
-            <button onClick={() => navigate('/user/assign-worker-to-service', { state: { from: location }, replace: true })}>Przypisz pracownika</button><br></br>
-            <button onClick={() => navigate('/user/service-types', { state: { from: location }, replace: true })}>Usługi</button>
+            <button onClick={() => navigate('/user/assign-services-to-order', { state: { from: location }, replace: true })}>Zarządzaj zamówieniami</button>
+            <button onClick={() => navigate('/user/assign-worker-to-service', { state: { from: location }, replace: true })}>Zarządzaj usługami</button><br></br>
+            <button onClick={() => navigate('/user/service-types', { state: { from: location }, replace: true })}>Typy usług</button>
         </>
       )
 }

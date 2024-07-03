@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 function PayForOrder() {
   const [orders, setOrders] = useState([])
   const [order, setOrder] = useState([])
+  const [totalPrice, setTotalPrice] = useState()
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,7 +19,7 @@ function PayForOrder() {
       try {
         // make axios post request
         await axiosPrivate.put('api/Order/' + orderId + '/paid',
-          JSON.stringify({ }),
+          JSON.stringify({}),
           {
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
@@ -28,6 +29,16 @@ function PayForOrder() {
       } catch (error) {
         console.log(error)
       }
+    }
+  }
+
+  async function handleChange(id) {
+    setOrder(id)
+    if (id !== '-1') {
+      var currentOrder = orders.find(o => o.id === Number(id))
+      var sum = 0
+      currentOrder.services.map(s => sum += s.servicePrice)
+      setTotalPrice(sum)
     }
   }
 
@@ -45,6 +56,7 @@ function PayForOrder() {
     }
 
     getOrders()
+    setTotalPrice(0)
   }, [])
 
   return (
@@ -56,15 +68,16 @@ function PayForOrder() {
           orders.length > 0 ? (
             <form onSubmit={() => updateStatus()}>
               <label>Zamówienie:</label><br></br>
-              <select name="order" onChange={(e) => setOrder(e.target.value)}>
-                <option value="-1">Wybierz zamówenie</option>
+              <select name="order" onChange={(e) => handleChange(e.target.value)}>
+                <option value="-1">Wybierz zamówienie</option>
                 {orders.map((o) =>
                   <option value={o.id}>{o.id}, {o.customer.name} {o.customer.surname}, {o.customer.email}</option>)}
               </select><br></br>
+              <label>Do zapłaty: {totalPrice} zł</label><br></br>
               <input type="submit" value="Opłać"></input>
             </form>
           )
-          : "Brak nieopłaconych zamówień."
+            : "Brak nieopłaconych zamówień."
         )
           : <p>Ładowanie...</p >
       }
