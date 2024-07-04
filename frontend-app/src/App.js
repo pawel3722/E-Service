@@ -21,6 +21,13 @@ import AssignServicesToOrder from './pages/manager/AssignServicesToOrder';
 import AssignWorkerToService from './pages/manager/AssignWorkerToService'
 import NewService from './pages/manager/NewService';
 import ServicemanServices from './pages/serviceman/ServicemanServices';
+import Models from './pages/manager/models/Models';
+import NewModel from './pages/manager/models/NewModel';
+import EditModel from './pages/manager/models/EditModel';
+import DeleteModel from './pages/manager/models/DeleteModel';
+import Parts from './pages/manager/parts/Parts';
+import NewPart from './pages/manager/parts/NewPart';
+import DeletePart from './pages/manager/parts/DeletePart';
 
 
 function App() {
@@ -44,8 +51,15 @@ function App() {
               <Route path='assign-manager-to-order' element={<AssignManagerToOrder />} />
               <Route path='service-types' element={<ServiceTypes />} />
               <Route path='new-service-type' element={<NewServiceType />} />
-              <Route path='edit-service-type/:id' element={<EditServiceType />} />
+              <Route path='edit-service-type/:id' element={<EditServiceType />} />            
               <Route path='delete-service-type/:id' element={<DeleteServiceType />} />
+              <Route path='models' element={<Models />} />
+              <Route path='new-model' element={<NewModel />} />
+              <Route path='edit-model/:id' element={<EditModel />} />
+              <Route path='delete-model/:id' element={<DeleteModel />} />
+              <Route path='parts' element={<Parts />} />
+              <Route path='new-part' element={<NewPart />} />
+              <Route path='delete-part/:id' element={<DeletePart />} />
               <Route path='assign-worker-to-service' element={<AssignWorkerToService />} />
               <Route path='assign-services-to-order' element={<AssignServicesToOrder />} />
               <Route path='new-service/:id' element={<NewService />} />

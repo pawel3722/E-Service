@@ -26,7 +26,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet, Authorize(Roles = "Admin,Manager")]
+        [HttpGet, Authorize(Roles = "Admin,Manager,Serviceman")]
         public async Task<IActionResult> Get()
         {
             var result = await _modelService.GetAllModelsAsync();

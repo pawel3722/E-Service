@@ -59,7 +59,7 @@ function EditServiceType() {
 
   return (
     <>
-      <div>Dodaj usługę</div>
+      <div>Edytuj usługę</div>
       {
         <form onSubmit={() => editServiceType()}>
           <label>Nazwa:</label><br></br>

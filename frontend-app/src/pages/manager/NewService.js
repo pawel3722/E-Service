@@ -49,6 +49,7 @@ function NewService() {
         console.log(response.data)
         setMinPrice(response.data.minPrice)
         setMaxPrice(response.data.maxPrice)
+        setPrice(response.data.minPrice)
       } catch (err) {
         console.error(err)
         navigate('/log', { state: { from: location }, replace: true })

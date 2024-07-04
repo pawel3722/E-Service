@@ -21,6 +21,7 @@ function DeleteServiceType() {
       alert("Usunięto usługę!")
     } catch (error) {
       console.log(error)
+      alert(error)
     }
   }
 
@@ -43,7 +44,7 @@ function DeleteServiceType() {
 
   return (
     <>
-      <div>Dodaj usługę</div>
+      <div>Czy na pewno chcesz usunąć tę usługę?</div>
       {
         <form onSubmit={() => deleteServiceType()}>
           <label>Nazwa: {serviceName}</label><br></br>
