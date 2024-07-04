@@ -28,6 +28,7 @@ function PayForOrder() {
         alert("Opłacono!")
       } catch (error) {
         console.log(error)
+        alert(error)
       }
     }
   }

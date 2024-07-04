@@ -22,8 +22,10 @@ function DeliverOrder() {
             withCredentials: true
           }
         );
+        alert('Zaktualizowano status!')
       } catch (error) {
         console.log(error)
+        alert(error)
       }
   }
 
@@ -55,7 +57,7 @@ function DeliverOrder() {
              Numer: {o.id}<br></br>
              Data: {o.date.split('T')[0]}<br></br>
              Opłacone: {o.paid ? "tak" : "nie"}<br></br>
-             <button onClick={() => updateStatus(o.id)}>Odebrano</button>
+             <button onClick={o.paid ? () => updateStatus(o.id) : alert('Proszę opłacić zamówienie!')}>Odebrano</button>
            </p>
          ))
        : <p>Ładowanie...</p>

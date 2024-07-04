@@ -30,33 +30,13 @@ function ClientOrders() {
             withCredentials: true
           }
         );
+        alert('Dodano ocenę!')
       } catch (error) {
         console.log(error)
+        alert(error)
       }
     }
   }
-
-  // async function updateReview(oid, rid) {
-  //   // store the states in the form data
-  //   var rating = formValue.rating
-  //   var comment = formValue.comment
-  //   var orderId = oid
-
-  //   if (rating > 0 && rating < 6 && comment !== '') {
-  //     try {
-  //       // make axios post request
-  //       await axiosPrivate.put('api/Review/' + rid,
-  //         JSON.stringify({ rating, comment, orderId }),
-  //         {
-  //           headers: { 'Content-Type': 'application/json' },
-  //           withCredentials: true
-  //         }
-  //       );
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-  // }
 
   async function handleChange(event) {
     setformValue({

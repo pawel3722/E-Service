@@ -32,6 +32,7 @@ function NewOrder() {
           alert("Dodano zamówienie!")
         } catch (error) {
           console.log(error)
+          alert(error)
         }
       }
       else {
@@ -47,6 +48,7 @@ function NewOrder() {
           alert("Dodano zamówienie!")
         } catch (error) {
           console.log(error)
+          alert(error)
         }
       }
     }

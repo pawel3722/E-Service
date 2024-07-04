@@ -31,6 +31,7 @@ function AssignManagerToOrder() {
           alert("Dodano menedżera!")
         } catch (error) {
           console.log(error)
+          alert(error)
         }
       }
       else

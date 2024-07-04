@@ -21,8 +21,10 @@ function AssignServicesToOrder() {
           withCredentials: true
         }
       );
+      alert('Zaktualizowano status')
     } catch (error) {
       console.log(error)
+      alert(error)
     }
   }
 
