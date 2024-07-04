@@ -20,6 +20,7 @@ import DeleteServiceType from './pages/manager/service-types/DeleteServiceType'
 import AssignServicesToOrder from './pages/manager/AssignServicesToOrder';
 import AssignWorkerToService from './pages/manager/AssignWorkerToService'
 import NewService from './pages/manager/NewService';
+import ServicemanServices from './pages/serviceman/ServicemanServices';
 
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
               <Route path='assign-worker-to-service' element={<AssignWorkerToService />} />
               <Route path='assign-services-to-order' element={<AssignServicesToOrder />} />
               <Route path='new-service/:id' element={<NewService />} />
+              <Route path='serviceman-services' element={<ServicemanServices />} />
             </Route>
           </Route>
         </Route>

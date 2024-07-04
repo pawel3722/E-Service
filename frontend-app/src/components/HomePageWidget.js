@@ -5,6 +5,7 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import ClientHomePageWidget from './ClientHomePageWidget';
 import SellerHomePageWidget from './SellerHomePageWidget';
 import ManagerHomePageWidget from './ManagerHomePageWidget';
+import ServicemanHomePageWidget from './ServicemanHomePageWidget';
 
 
 function HomePageWidget() {
@@ -39,11 +40,13 @@ function HomePageWidget() {
             console.log(users.roles),
             users.roles.find((r) => r.name === "Manager")
               ? <ManagerHomePageWidget />
-              : users.roles.find((r) => r.name === "Seller")
-                ? <SellerHomePageWidget />
-                : users.roles.find((r) => r.name === "Client")
-                  ? <ClientHomePageWidget />
-                  : <p>Strona główna w przygotowaniu.</p>
+              : users.roles.find((r) => r.name === "Serviceman")
+                ? <ServicemanHomePageWidget />
+                : users.roles.find((r) => r.name === "Seller")
+                  ? <SellerHomePageWidget />
+                  : users.roles.find((r) => r.name === "Client")
+                    ? <ClientHomePageWidget />
+                    : <p>Strona główna w przygotowaniu.</p>
           )
           : <p>Użytkownik nie należy do żadnej roli!</p>
       }

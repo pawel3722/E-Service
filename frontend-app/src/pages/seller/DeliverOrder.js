@@ -11,12 +11,11 @@ function DeliverOrder() {
 
   async function updateStatus(id) {
     // store the states in the form data
-    var status = 0
+    var status = 5
 
-    if (status >= 0 && status <= 5) {
       try {
         // make axios post request
-        await axiosPrivate.put('api/Order/' + id,
+        await axiosPrivate.put('api/Order/' + id + '/status',
           JSON.stringify({ status }),
           {
             headers: { 'Content-Type': 'application/json' },
@@ -26,7 +25,6 @@ function DeliverOrder() {
       } catch (error) {
         console.log(error)
       }
-    }
   }
 
   useEffect(() => {
@@ -50,13 +48,17 @@ function DeliverOrder() {
 
       <div>Ukończone zamówienia:</div>
       {
-        orders ? (
-          orders.length > 0 ? (
-            "Tu będą zamówenia. Najpierw trzeba zaimplementować wcześniejsze etapy."
-          )
-          : "Brak zamówień."
-        )
-          : <p>Ładowanie...</p >
+       orders
+       ? (
+         orders.map((o) =>
+           <p>
+             Numer: {o.id}<br></br>
+             Data: {o.date.split('T')[0]}<br></br>
+             Opłacone: {o.paid ? "tak" : "nie"}<br></br>
+             <button onClick={() => updateStatus(o.id)}>Odebrano</button>
+           </p>
+         ))
+       : <p>Ładowanie...</p>
       }
 
     </>
