@@ -44,7 +44,6 @@ function HomePageWidget() {
           )
           : <p>Użytkownik nie należy do żadnej roli!</p>
       }
-      <Outlet />
     </>
   )
 }

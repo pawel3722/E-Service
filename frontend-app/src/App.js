@@ -8,10 +8,11 @@ import UserPage from './pages/UserPage';
 import ClientOrders from './pages/client/ClientOrders';
 import ProtectedRoutes from './context/ProtectedRoutes';
 import PersistLogin from './components/PersistLogin';
-import HomePageWidget from './components/HomePageWidget';
+//import HomePageWidget from './components/HomePageWidget';
 import NewOrder from './pages/seller/NewOrder'
 import DeliverOrder from './pages/seller/DeliverOrder'
 import PayForOrder from './pages/seller/PayForOrder';
+import ClientHomePageWidget from './components/ClientHomePageWidget';
 
 function App() {
   return (
@@ -26,8 +27,8 @@ function App() {
         <Route element={<PersistLogin />}>
           <Route element={<ProtectedRoutes />} >
             <Route path='user' element={<UserPage />} >
-              <Route path='home' element={<HomePageWidget />} />
-              <Route path='client-orders' element={<ClientOrders />} />
+              <Route path='user/home' element={<ClientHomePageWidget />} />
+              <Route path='user/client-orders' element={<ClientOrders />} />
               <Route path='new-order' element={<NewOrder />} />
               <Route path='deliver-order' element={<DeliverOrder />} />
               <Route path='pay-for-order' element={<PayForOrder />} />

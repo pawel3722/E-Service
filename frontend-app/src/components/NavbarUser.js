@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { axiosPrivate } from '../api/axios'
 import userLogo from '../image/user.png'
 import logo from '../image/app_icon.png'
 import './NavbarUser.css'
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
 
 const NavbarUser = () => {
 
     const [user, setUser] = useState({});
+    const axiosPrivate = useAxiosPrivate()
 
     useEffect(() => {
 
