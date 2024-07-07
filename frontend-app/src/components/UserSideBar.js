@@ -25,29 +25,75 @@ const UserSideBar = () => {
 
     return (
         <div className='user_side_bar'>
-            {
-                roles.length > 0
-                    ? roles.map((el) => {
+            <ul>
+                {
+                    roles.length > 0
+                        ? roles.map((el) => {
 
-                        switch (el.name) {
-                            case "Client":
-                                return (
-                                    <ul>
-                                        <li>
-                                            <NavLink to='user/home'>Start</NavLink>
-                                        </li>
-                                        <li>
-                                            <NavLink to='user/client-orders'>Moje zamówienia</NavLink>
-                                        </li>
-                                    </ul>
-                                )
-                            default:
-                                break;
-                        }
-                    })
-                    : <></>
-            }
-
+                            switch (el.name) {
+                                case "Client":
+                                    return (
+                                        <>
+                                            <li>
+                                                <NavLink to='home'>Start</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='client-orders'>Moje zamówienia</NavLink>
+                                            </li>
+                                        </>
+                                    )
+                                case "Manager":
+                                    return (
+                                        <>
+                                            <li>
+                                                <NavLink to='assign-manager-to-order'>Przypisz menażera</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='assign-services-to-order'>Zarządzaj zamówieniami</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='assign-worker-to-service'>Zarządzaj usługami</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='service-types'>Typy usług</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='models'>Modele</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='parts'>Części</NavLink>
+                                            </li>
+                                        </>
+                                    )
+                                case "Seller":
+                                    return (
+                                        <>
+                                            <li>
+                                                <NavLink to='new-order'>Nowe zamówienie</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='pay-for-order'>Opłacenie zamówienia</NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='deliver-order'>Odbiór zamówienia</NavLink>
+                                            </li>
+                                        </>
+                                    )
+                                case "Serviceman":
+                                    return (
+                                        <>
+                                            <li>
+                                                <NavLink to='serviceman-services'>Moje usługi</NavLink>
+                                            </li>
+                                        </>
+                                    )
+                                default:
+                                    break;
+                            }
+                        })
+                        : <></>
+                }
+            </ul>
         </div>
     )
 }

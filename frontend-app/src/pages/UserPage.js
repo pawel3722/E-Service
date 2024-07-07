@@ -19,17 +19,14 @@ function UserPage() {
       try {
         const response = await axiosPrivate.get('/api/Auth/users/me')
         console.log(response.data)
-        response.data.roles.find((r) => r.name == "Client")
-          ? navigate('/user/home')
-          : navigate("/home")
-          // switch (key) {
-          //   case value:
-              
-          //     break;
-          
-          //   default:
-          //     break;
-          // }
+        if(response.data.roles.find((r) => r.name == "Manager"))
+          navigate('/user/assign-services-to-order', { state: { from: location }, replace: false })
+        else if(response.data.roles.find((r) => r.name == "Serviceman"))
+          navigate('/user/servicenam', { state: { from: location }, replace: false })
+        else if(response.data.roles.find((r) => r.name == "Seller"))
+          navigate('/user/seller', { state: { from: location }, replace: false })
+        else if(response.data.roles.find((r) => r.name == "Client"))
+          navigate('/user/home', { state: { from: location }, replace: false })
 
       } catch (err) {
         console.error(err)

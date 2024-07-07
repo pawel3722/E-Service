@@ -119,7 +119,7 @@ namespace EService.Controllers
             return NotFound();
         }
 
-        [HttpGet("roles"), Authorize(Roles = "Admin, Seller")]
+        [HttpGet("roles"), Authorize(Roles = "Admin, Seller, Manager")]
         public async Task<IActionResult> GetRoles()
         {
             var result = await _applicationUserService.GetAllRolesAsync();

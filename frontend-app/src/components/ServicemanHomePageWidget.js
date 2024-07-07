@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 
-function SellerHomePageWidget() {
+function ServicemanHomePageWidget() {
     const axiosPrivate = useAxiosPrivate();
     const navigate = useNavigate();
     const location = useLocation();
@@ -15,11 +15,9 @@ function SellerHomePageWidget() {
       return (
         <>
             <div>Widżet strony głównej w przygotowaniu.</div>
-            <button onClick={() => navigate('/user/new-order')}>Nowe zamówienie</button>
-            <button onClick={() => navigate('/user/pay-for-order')}>Opłacenie zamówienia</button>
-            <button onClick={() => navigate('/user/deliver-order')}>Odbiór zamówienia</button>
+            <button onClick={() => navigate('/user/serviceman-services')}>Moje usługi</button>
         </>
       )
 }
 
-export default SellerHomePageWidget
+export default ServicemanHomePageWidget

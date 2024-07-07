@@ -70,7 +70,7 @@ namespace EService.Services
         public async Task<(bool Confirmed, string Response)> DeletePartAsync(int id)
         {
             var part = await _partRepository.GetPartByIdAsync(id);
-            if (part != null) return await Task.FromResult((false, "Part with given id does not exist."));
+            if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
             await _partRepository.RemovePartAsync(part);
             return await Task.FromResult((true, "Part successfully deleted."));
         }

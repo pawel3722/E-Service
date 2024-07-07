@@ -48,7 +48,7 @@ namespace EService.Services
         {
             var serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
             if (serviceType == null) return await Task.FromResult((false, "Service type with given id does not exist."));
-            if (request.MaxPrice >= request.MinPrice) return await Task.FromResult((false, "Max value must be greater than min value."));
+            if (request.MaxPrice < request.MinPrice) return await Task.FromResult((false, "Max value must be greater than min value."));
             if(request.Name != null) serviceType.Name = request.Name;
             if (request.MinPrice != null) serviceType.MinPrice = request.MinPrice.Value;
             if (request.MaxPrice != null) serviceType.MaxPrice = request.MaxPrice.Value;

@@ -30,33 +30,13 @@ function ClientOrders() {
             withCredentials: true
           }
         );
+        alert('Dodano ocenę!')
       } catch (error) {
         console.log(error)
+        alert(error)
       }
     }
   }
-
-  // async function updateReview(oid, rid) {
-  //   // store the states in the form data
-  //   var rating = formValue.rating
-  //   var comment = formValue.comment
-  //   var orderId = oid
-
-  //   if (rating > 0 && rating < 6 && comment !== '') {
-  //     try {
-  //       // make axios post request
-  //       await axiosPrivate.put('api/Review/' + rid,
-  //         JSON.stringify({ rating, comment, orderId }),
-  //         {
-  //           headers: { 'Content-Type': 'application/json' },
-  //           withCredentials: true
-  //         }
-  //       );
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   }
-  // }
 
   async function handleChange(event) {
     setformValue({
@@ -106,7 +86,7 @@ function ClientOrders() {
 
       <div>Moje zamówienia:</div>
       {
-        orders.length > 0
+        orders
           ? (
             orders.map((o) =>
               <p>
@@ -122,9 +102,9 @@ function ClientOrders() {
                   <li>
                     Usługa: {serviceTypes.find((st) => st.id === s.serviceTypeId) ? serviceTypes.find((st) => st.id === s.serviceTypeId).name : ""} ,
                     Cena: {s.servicePrice},
-                    Status: {o.status === 0 ? "Utworzono"
-                      : o.status === 1 ? "Przypisano pracownika"
-                        : o.status === 2 ? "Oczekiwanie na część" : "Ukończono"}
+                    Status: {s.status === 0 ? "Utworzono"
+                      : s.status === 1 ? "Przypisano pracownika"
+                        : s.status === 2 ? "Oczekiwanie na część" : "Ukończono"}
                   </li>
                 )}
                 {!reviews ? "Ładowanie" : reviews.find((r) => r.orderId === o.id) ?
