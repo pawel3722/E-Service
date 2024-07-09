@@ -152,6 +152,8 @@ namespace EService.Services
                     if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
                     if (part.Service != null) return await Task.FromResult((false, "Part is used in another service."));
                     part.Service = service;
+                    double price = part.Model!.Price;
+                    service.PartPrice = price;
                     await _serviceRepository.SaveChangesAsync();
                     scope.Complete();
                     return await Task.FromResult((true, "Service successfully updated."));

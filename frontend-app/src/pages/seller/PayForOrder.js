@@ -38,7 +38,7 @@ function PayForOrder() {
     if (id !== '-1') {
       var currentOrder = orders.find(o => o.id === Number(id))
       var sum = 0
-      currentOrder.services.map(s => sum += s.servicePrice)
+      currentOrder.services.map(s => sum += s.servicePrice + s.partPrice)
       setTotalPrice(sum)
     }
   }
@@ -47,7 +47,7 @@ function PayForOrder() {
     const getOrders = async () => {
       try {
         const response = await axiosPrivate.get('/api/Order')
-        var notPaidOrders = response.data.filter(o => o.paid === false)
+        var notPaidOrders = response.data.filter(o => o.paid === false && o.status >= 4)
         console.log(notPaidOrders)
         setOrders(notPaidOrders)
       } catch (err) {

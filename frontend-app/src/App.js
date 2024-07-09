@@ -21,6 +21,7 @@ import AssignServicesToOrder from './pages/manager/AssignServicesToOrder';
 import AssignWorkerToService from './pages/manager/AssignWorkerToService'
 import NewService from './pages/manager/NewService';
 import ServicemanServices from './pages/serviceman/ServicemanServices';
+import ManageService from './pages/serviceman/ManageService';
 import Models from './pages/manager/models/Models';
 import NewModel from './pages/manager/models/NewModel';
 import EditModel from './pages/manager/models/EditModel';
@@ -67,6 +68,7 @@ function App() {
               <Route path='assign-services-to-order' element={<AssignServicesToOrder />} />
               <Route path='new-service/:id' element={<NewService />} />
               <Route path='serviceman-services' element={<ServicemanServices />} />
+              <Route path='manage-service/:id' element={<ManageService />} />
               <Route path='manager' element={<ManagerHomePageWidget />} />
               <Route path='serviceman' element={<ServicemanHomePageWidget />} />
               <Route path='seller' element={<SellerHomePageWidget />} />

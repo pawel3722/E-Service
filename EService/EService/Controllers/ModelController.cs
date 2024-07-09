@@ -17,7 +17,7 @@ namespace EService.Controllers
             _modelService = service;
         }
 
-        [HttpGet("{id}"), Authorize(Roles = "Admin,Manager")]
+        [HttpGet("{id}"), Authorize(Roles = "Admin,Manager,Serviceman")]
         public async Task<IActionResult> Get(int id)
         {
             var result = await _modelService.GetModelAsync(id);
