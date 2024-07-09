@@ -50,7 +50,7 @@ namespace EService.Services
             if (request.PartId != null)
             {
                 using var scope = new TransactionScope(TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead },
+                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
                     TransactionScopeAsyncFlowOption.Enabled);
                 try
                 {
@@ -144,7 +144,7 @@ namespace EService.Services
             if (request.PartId != null)
             {
                 using var scope = new TransactionScope(TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead },
+                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
                     TransactionScopeAsyncFlowOption.Enabled);
                 try
                 {
