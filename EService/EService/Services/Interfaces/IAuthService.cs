@@ -12,5 +12,6 @@ namespace EService.Services
         public Task<(bool Confirmed, string Response)> RegisterUserAsync(UserRegisterRequestDto request);
         public Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> LoginUserAsync(UserLoginRequestDto request);
         public Task<(bool Confirmed, string Response, TokensResponseDto? Tokens)> RefreshTokenAsync();
+        public Task<(bool Confirmed, string Response)> LogoutUserAsync();
     }
 }

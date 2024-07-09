@@ -52,6 +52,15 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var result = await _authService.LogoutUserAsync();
+            if (result.Confirmed)
+                return Ok(result.Response);
+            else return BadRequest(result.Response);
+        }
+
         [HttpGet("users/me"), Authorize]
         public async Task<IActionResult> GetMe()
         {
