@@ -278,6 +278,7 @@ namespace EService.Services
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
             if (order == null) return await Task.FromResult((false, "Order with given id does not exist."));
+            if(!(request.newServices.Count > 0)) return await Task.FromResult((false, "No fields to be updated.")); //nowe
             var listOfServices = order.Services;
             using var scope = new TransactionScope(TransactionScopeOption.Required,
                     new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
@@ -309,6 +310,7 @@ namespace EService.Services
                     };
                     listOfServices.Add(newService);
                 }
+                //if(listOfServices == order.Services) return await Task.FromResult((false, "No fields to be updated."));
                 order.Services = listOfServices;
                 await _orderRepository.SaveChangesAsync();
                 scope.Complete();
@@ -351,6 +353,7 @@ namespace EService.Services
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
             if (order == null) return await Task.FromResult((false, "Order with given id does not exist."));
+            if (order.Paid == true) return await Task.FromResult((false, "No fields to be updated.")); //nowe
             order.Paid = true;
             await _orderRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Order successfully updated."));
