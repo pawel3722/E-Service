@@ -331,6 +331,7 @@ namespace EService.Services
             var order = await _orderRepository.GetOrderByIdAsync(id);
             if(order == null) return await Task.FromResult((false, "Order with given id does not exist."));
             if (!order.Paid && request.Status.Value == OrderStatus.Received) return await Task.FromResult((false, "There is no payment for this order."));
+            if(!(request.Status != null && request.Status != order.Status)) return await Task.FromResult((false, "No fields to be updated.")); //NOWE
             order.Status = request.Status.Value;
             if(request.Status.Value == OrderStatus.FinishedAnalysis)
             {
