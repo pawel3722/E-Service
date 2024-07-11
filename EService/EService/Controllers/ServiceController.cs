@@ -44,7 +44,7 @@ namespace EService.Controllers
             else return BadRequest(result.Response);
         }
 
-        [HttpPut("{id}"), Authorize(Roles = "Admin, Manager")]
+        [HttpPut("{id}"), Authorize(Roles = "Admin, Manager, Serviceman")]
         public async Task<IActionResult> Update(UpdateServiceDto request, int id)
         {
             var result = await _serviceService.UpdateService(request, id);

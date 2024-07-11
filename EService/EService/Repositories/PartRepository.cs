@@ -17,7 +17,7 @@ namespace EService.Repositories
         public async Task<Part?> GetPartByIdAsync(int id)
         {
             using var scope = new TransactionScope(TransactionScopeOption.Required,
-                                                   new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                                                   new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead },
                                                    TransactionScopeAsyncFlowOption.Enabled);
             Part? part = null;
             try

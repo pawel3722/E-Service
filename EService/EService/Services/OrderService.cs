@@ -3,6 +3,7 @@ using EService.Dtos.ApplicationUserDtos;
 using EService.Dtos.OrderDtos;
 using EService.Dtos.ReviewDtos;
 using EService.Models;
+using EService.Repositories;
 using EService.Repositories.Interfaces;
 using System.Security.Claims;
 using System.Transactions;
@@ -56,7 +57,7 @@ namespace EService.Services
             if(request.Services.Count > 0)
             {
                 using var scope = new TransactionScope(TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = IsolationLevel.RepeatableRead },
+                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
                     TransactionScopeAsyncFlowOption.Enabled);
                 try
                 {
@@ -147,33 +148,49 @@ namespace EService.Services
                 Order = order,
                 OrderId = order.Id
             };
-            var listOfServices = new List<Service>();
-            foreach(var serviceDto in request.newServices)
+            if (request.newServices.Count > 0)
             {
-                var serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(serviceDto.ServiceTypeId);
-                if(serviceType == null) return await Task.FromResult((false, "Service type with given id does not exist."));
-                Part? part = null;
-                if (serviceDto.PartId != null)
+                using var scope = new TransactionScope(TransactionScopeOption.Required,
+                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                    TransactionScopeAsyncFlowOption.Enabled);
+                var listOfServices = order.Services;
+                try
                 {
-                    part = await _partRepository.GetPartByIdAsync(serviceDto.PartId.Value);
-                    if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
-                    if (part.Service != null) return await Task.FromResult((false, "Part is used in another service."));
+                    foreach (var serviceDto in request.newServices)
+                    {
+                        var serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(serviceDto.ServiceTypeId);
+                        if (serviceType == null) return await Task.FromResult((false, "Service type with given id does not exist."));
+                        Part? part = null;
+                        if (serviceDto.PartId != null)
+                        {
+                            part = await _partRepository.GetPartByIdAsync(serviceDto.PartId.Value);
+                            if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
+                            if (part.Service != null) return await Task.FromResult((false, "Part is used in another service."));
+                        }
+                        var newService = new Service()
+                        {
+                            Status = ServiceStatus.Created,
+                            ServicePrice = serviceDto.ServicePrice,
+                            PartId = serviceDto.PartId,
+                            Part = part,
+                            PartPrice = part == null ? 0 : part.Model.Price,
+                            ServiceTypeId = serviceDto.ServiceTypeId,
+                            ServiceType = serviceType,
+                            OrderId = order.Id,
+                            Order = order
+                        };
+                        listOfServices.Add(newService);
+                    }
+                    order.Services = listOfServices;
+                    await _orderRepository.SaveChangesAsync();
+                    scope.Complete();
+                    return await Task.FromResult((true, "Order successfully updated."));
                 }
-                var newService = new Service()
+                catch (Exception ex)
                 {
-                    Status = ServiceStatus.Created,
-                    ServicePrice = serviceDto.ServicePrice,
-                    PartId = serviceDto.PartId,
-                    Part = part,
-                    PartPrice = part == null ? 0 : part.Model.Price,
-                    ServiceTypeId = serviceDto.ServiceTypeId,
-                    ServiceType = serviceType,
-                    OrderId = order.Id,
-                    Order = order
-                };
-                listOfServices.Add(newService);
+                    return await Task.FromResult((false, "Error during processing request."));
+                }
             }
-            order.Services = listOfServices;
             await _orderRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Order successfully updated."));
         }
@@ -181,35 +198,46 @@ namespace EService.Services
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
             if (order == null) return await Task.FromResult((false, "Order with given id does not exist."));
-            var listOfServices = new List<Service>();
-            foreach (var serviceDto in request.newServices)
+            var listOfServices = order.Services;
+            using var scope = new TransactionScope(TransactionScopeOption.Required,
+                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
+                    TransactionScopeAsyncFlowOption.Enabled);
+            try
             {
-                var serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(serviceDto.ServiceTypeId);
-                if (serviceType == null) return await Task.FromResult((false, "Service type with given id does not exist."));
-                Part? part = null;
-                if (serviceDto.PartId != null)
+                foreach (var serviceDto in request.newServices)
                 {
-                    part = await _partRepository.GetPartByIdAsync(serviceDto.PartId.Value);
-                    if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
-                    if (part.Service != null) return await Task.FromResult((false, "Part is used in another service."));
+                    var serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(serviceDto.ServiceTypeId);
+                    if (serviceType == null) return await Task.FromResult((false, "Service type with given id does not exist."));
+                    Part? part = null;
+                    if (serviceDto.PartId != null)
+                    {
+                        part = await _partRepository.GetPartByIdAsync(serviceDto.PartId.Value);
+                        if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
+                        if (part.Service != null) return await Task.FromResult((false, "Part is used in another service."));
+                    }
+                    var newService = new Service()
+                    {
+                        Status = ServiceStatus.Created,
+                        ServicePrice = serviceDto.ServicePrice,
+                        PartId = serviceDto.PartId,
+                        Part = part,
+                        PartPrice = part == null ? 0 : part.Model.Price,
+                        ServiceTypeId = serviceDto.ServiceTypeId,
+                        ServiceType = serviceType,
+                        OrderId = order.Id,
+                        Order = order
+                    };
+                    listOfServices.Add(newService);
                 }
-                var newService = new Service()
-                {
-                    Status = ServiceStatus.Created,
-                    ServicePrice = serviceDto.ServicePrice,
-                    PartId = serviceDto.PartId,
-                    Part = part,
-                    PartPrice = part == null ? 0 : part.Model.Price,
-                    ServiceTypeId = serviceDto.ServiceTypeId,
-                    ServiceType = serviceType,
-                    OrderId = order.Id,
-                    Order = order
-                };
-                listOfServices.Add(newService);
+                order.Services = listOfServices;
+                await _orderRepository.SaveChangesAsync();
+                scope.Complete();
+                return await Task.FromResult((true, "Order successfully updated."));
             }
-            order.Services = listOfServices;
-            await _orderRepository.SaveChangesAsync();
-            return await Task.FromResult((true, "Order successfully updated."));
+            catch (Exception ex)
+            {
+                return await Task.FromResult((false, "Error during processing request."));
+            }
         }
         public async Task<(bool Confirmed, string Response)> UpdateOrderStatusAsync(UpdateOrderDto request, int id)
         {

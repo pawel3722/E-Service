@@ -9,6 +9,7 @@ using EService.Repositories.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 
@@ -64,7 +65,9 @@ namespace EService.Services
             if (user == null) return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Incorrect email or password.", null));
             if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt)) return await Task.FromResult<(bool, string, TokensResponseDto?)>((false, "Incorrect email or password.", null));
             var jwtToken = CreateJwtToken(user);
-            var refreshToken = GenerateRefreshToken();
+            (string Token, DateTime CreatedAt, DateTime Expires) refreshToken;
+            do refreshToken = GenerateRefreshToken();
+            while (await _authRepository.GetUserByRefreshTokenAsync(refreshToken.Token) != null);
             var tokens = new TokensResponseDto
             {
                 JwtToken = jwtToken,
@@ -86,7 +89,9 @@ namespace EService.Services
             if (user == null) return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Invalid refresh token.", null));
             if (user.TokenExpires < DateTime.Now) return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((false, "Token expired.", null));
             var jwtToken = CreateJwtToken(user);
-            var newRefreshToken = GenerateRefreshToken();
+            (string Token, DateTime CreatedAt, DateTime Expires) newRefreshToken;
+            do newRefreshToken = GenerateRefreshToken();
+            while (await _authRepository.GetUserByRefreshTokenAsync(newRefreshToken.Token) != null);
             var tokens = new TokensResponseDto
             {
                 JwtToken = jwtToken,
@@ -100,6 +105,19 @@ namespace EService.Services
             SetRefreshTokenInResponse(newRefreshToken);
             await SetRefreshTokenForUserAsync(newRefreshToken, user);
             return await Task.FromResult<(bool Confirmed, string Response, TokensResponseDto? Tokens)>((true, $"Welcome {user.Name}.", tokens));
+        }
+
+        public async Task<(bool Confirmed, string Response)> LogoutUserAsync()
+        {
+            var refreshToken = _httpContextAccessor.HttpContext!.Request.Cookies["refreshToken"];
+            var user = await _authRepository.GetUserByRefreshTokenAsync(refreshToken!);
+            if (user == null) return await Task.FromResult<(bool Confirmed, string Response)>((false, "Invalid refresh token."));
+            (string Token, DateTime CreatedAt, DateTime Expires) newRefreshToken;
+            do newRefreshToken = GenerateInvalidRefreshToken();
+            while (await _authRepository.GetUserByRefreshTokenAsync(newRefreshToken.Token) != null);
+            SetRefreshTokenInResponse(newRefreshToken);
+            await SetRefreshTokenForUserAsync (newRefreshToken, user);
+            return await Task.FromResult<(bool Confirmed, string Response)>((true, "Correctly logged out."));
         }
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
@@ -130,13 +148,17 @@ namespace EService.Services
                 claims.Add(new Claim(ClaimTypes.Role, role.Name));
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddSeconds(60), signingCredentials: creds);
+            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddMinutes(10), signingCredentials: creds);
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
             return jwt;
         }
         private (string Token, DateTime CreatedAt, DateTime Expires) GenerateRefreshToken()
         {
-            return (Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)), DateTime.Now, DateTime.Now.AddHours(24));
+            return (Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)), DateTime.Now, DateTime.Now.AddDays(1));
+        }
+        private (string Token, DateTime CreatedAt, DateTime Expires) GenerateInvalidRefreshToken()
+        {
+            return (Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)), DateTime.Now, DateTime.Now.AddDays(-1));
         }
         private void SetRefreshTokenInResponse((string Token, DateTime CreatedAt, DateTime Expires) refreshToken)
         {

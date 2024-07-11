@@ -22,7 +22,7 @@ function UserPage() {
         if(response.data.roles.find((r) => r.name == "Manager"))
           navigate('/user/assign-services-to-order', { state: { from: location }, replace: false })
         else if(response.data.roles.find((r) => r.name == "Serviceman"))
-          navigate('/user/servicenam', { state: { from: location }, replace: false })
+          navigate('/user/serviceman', { state: { from: location }, replace: false })
         else if(response.data.roles.find((r) => r.name == "Seller"))
           navigate('/user/seller', { state: { from: location }, replace: false })
         else if(response.data.roles.find((r) => r.name == "Client"))
