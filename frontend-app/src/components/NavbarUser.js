@@ -6,6 +6,7 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate'
 import logout from '../image/logout.png'
 import useAuth from '../hooks/useAuth'
 import { useNavigate, useLocation } from 'react-router-dom'
+import useLogout from '../hooks/useLogout'
 
 
 const NavbarUser = () => {
@@ -16,6 +17,7 @@ const NavbarUser = () => {
     const { setAuth } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
+    const logoutFunc = useLogout()
 
     useEffect(() => {
 
@@ -34,8 +36,8 @@ const NavbarUser = () => {
 
     }, [])
 
-    const logoutUser = () => {
-        setAuth({})
+    const logoutUser =  async () => {
+        await logoutFunc()
         navigate('/log', { state: { from: location }, replace: true })
     }
 
