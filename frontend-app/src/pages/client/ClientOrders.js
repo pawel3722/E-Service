@@ -2,6 +2,8 @@ import React from 'react'
 import { useState, useEffect } from "react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate, useLocation } from "react-router-dom";
+import './ClientOrders.css'
+import arrow from '../../image/arrow.png'
 
 function ClientOrders() {
   const [serviceTypes, setServiceTypes] = useState([])
@@ -83,55 +85,95 @@ function ClientOrders() {
 
   return (
     <>
-
-      <div>Moje zamówienia:</div>
       {
-        orders
-          ? (
-            orders.map((o) =>
-              <p>
-                Numer: {o.id}<br></br>
-                Data: {o.date.split('T')[0]}<br></br>
-                Opłacone: {o.paid ? "tak" : "nie"}<br></br>
-                Status: {o.status === 0 ? "Przyjęto do realizacji"
-                  : o.status === 1 ? "Przypisano menadżera"
-                    : o.status === 2 ? "Ukończono ekspertyzę"
-                      : o.status === 3 ? "Zlecono wykonanie działań"
-                        : o.status === 4 ? "Naprawiono" : "Odebrano"}<br></br>
-                Usługi: {o.services.map((s) =>
-                  <li>
-                    Usługa: {serviceTypes.find((st) => st.id === s.serviceTypeId) ? serviceTypes.find((st) => st.id === s.serviceTypeId).name : ""} ,
-                    Cena: {s.servicePrice},
-                    Status: {s.status === 0 ? "Utworzono"
-                      : s.status === 1 ? "Przypisano pracownika"
-                        : s.status === 2 ? "Oczekiwanie na część" : "Ukończono"}
-                  </li>
-                )}
-                {!reviews ? "Ładowanie" : reviews.find((r) => r.orderId === o.id) ?
-                  (
-                    <p>
-                      Ocena: {reviews.find((r) => r.orderId === o.id).rating}<br></br>
-                      Komentarz: {reviews.find((r) => r.orderId === o.id).comment}
-                    </p>
-                  ) : o.status !== 5 ? "" : (
-                    <form onSubmit={() => addReview(o.id)}>
-                      <label>Ocena:</label><br></br>
-                      <input type="number"
-                        id="rating"
-                        name="rating"
-                        onInput={handleChange}
-                      /><br></br>
-                      <label>Komentarz:</label><br></br>
+        orders ? orders.map((o) => {
+          return (
+            <div class='order_details'>
+              <div id='div1'>
+                <p> Numer: {o.id} </p>
+                <p> Data: {o.date.split('T')[0]} </p>
+                <p> Opłacone: {o.paid ? "tak" : "nie"} </p>
+                <p> Status: {
+                  (() => {
+                    switch (o.status) {
+                      case 0:
+                        return "Przyjęto do realizacji"
+                      case 1:
+                        return "Przypisano menadżera"
+                      case 2:
+                        return "Ukończono ekspertyzę"
+                      case 3:
+                        return "Zlecono wykonanie działań"
+                      case 4:
+                        return "Naprawiono"
+                      default:
+                        return "Odebrano"
+                    }
+                  })()
+                } </p>
+              </div>
+              <h3>Wykonane usługi</h3>
+              <table>
+                <tr>
+                  <th>Usługa</th>
+                  <th>Cena</th>
+                  <th>Status</th>
+                </tr>
+                {
+                  o.services.map((s) => {
+                    return (
+                      <tr>
+                        <td>{serviceTypes.find((st) => st.id === s.serviceTypeId) ? serviceTypes.find((st) => st.id === s.serviceTypeId).name : ""}</td>
+                        <td>{s.servicePrice}</td>
+                        <td>{(() => {
+                          switch (s.status) {
+                            case 0:
+                              return "Utworzono"
+                            case 1:
+                              return "Przypisano pracownika"
+                            case 2:
+                              return "Oczekiwanie na część"
+                            default:
+                              return "Ukończono"
+                          }
+                        })()}</td>
+                      </tr>
+                    )
+                  })
+                }
+              </table>
+              {!reviews ? "Ładowanie" : reviews.find((r) => r.orderId === o.id) ?
+                (
+                  <div id='div2'>
+                    <p>Komentarz: {reviews.find((r) => r.orderId === o.id).comment}</p>
+                    <p>Ocena: {reviews.find((r) => r.orderId === o.id).rating}</p>
+                  </div>
+                ) : o.status !== 5 ? "" : (
+                  <form onSubmit={() => addReview(o.id)}>
+                    <div class='revind'>
                       <input type="text"
                         id="comment"
                         name="comment"
                         onInput={handleChange}
-                      /><br></br>
-                      <input type="submit" value="Zapisz"></input>
-                    </form>
-                  )}
-              </p>
-            ))
+                        placeholder='Wpisz komentarz'
+                        className='comment'
+                      />
+                      <label>Ocena:</label>
+                      <input type="number"
+                        id="rating"
+                        name="rating"
+                        onInput={handleChange}
+                        className='grade'
+                      />
+                    </div>
+                    <button className='sendBtn'>
+                      <img src={arrow} alt='' />
+                    </button>
+                  </form>
+                )}
+            </div>
+          )
+        })
           : <p>Ładowanie...</p>
       }
 

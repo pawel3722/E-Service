@@ -35,7 +35,7 @@ const NavbarUser = () => {
     }, [])
 
     const logoutUser = () => {
-        setAuth(() => { })
+        setAuth({})
         navigate('/log', { state: { from: location }, replace: true })
     }
 

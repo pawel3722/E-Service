@@ -12,6 +12,13 @@ import ps4 from '../image/ps4.png'
 import { Navbar } from '../components/Navbar';
 
 const SERVICE_URL = '/api/ServiceType'
+const TabDevice = [
+  "komputer",
+  "laptop",
+  "telefon",
+  "telewizor",
+  "konsola"
+]
 
 function Uslugi() {
 
@@ -21,7 +28,7 @@ function Uslugi() {
   const getService = async () => {
     try {
       const response = await axios.get(SERVICE_URL)
-      setValue(response?.data)
+      setValue(options == 1 ? response?.data : response?.data.filter((s) => s.deviceType == TabDevice[options - 2]))
     } catch (err) {
       console.log(err);
     }
