@@ -54,7 +54,24 @@ namespace EService.Services
             var part = await _partRepository.GetPartByIdAsync(id);
             if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
             Model? model = null;
-            if (request.ModelId != null)
+
+            //NOWE
+            if (!(request.ModelId != null && request.ModelId != part.ModelId 
+                || request.SerialNumber != null && request.SerialNumber != part.SerialNumber))
+            {
+                return await Task.FromResult((false, "No fields to be updated."));
+            }
+            model = await _modelRepository.GetModelByIdAsync(request.ModelId.Value);
+            if (model == null) return await Task.FromResult((false, "Model with given id does not exist."));
+            if (part.Model != null) part.Model.Parts.Remove(part);
+            part.ModelId = request.ModelId.Value;
+            part.Model = model;
+
+            await _partRepository.SaveChangesAsync();
+            return await Task.FromResult((true, "Part successfully updated."));
+            //NOWE
+
+           /* if (request.ModelId != null)
             {
                 model = await _modelRepository.GetModelByIdAsync(request.ModelId.Value);
                 if(model == null) return await Task.FromResult((false, "Model with given id does not exist."));
@@ -64,7 +81,7 @@ namespace EService.Services
             }
             if(request.SerialNumber != null) part.SerialNumber = request.SerialNumber;
             await _partRepository.SaveChangesAsync();
-            return await Task.FromResult((true, "Part successfully updated."));
+            return await Task.FromResult((true, "Part successfully updated.")); */
         }
 
         public async Task<(bool Confirmed, string Response)> DeletePartAsync(int id)
