@@ -148,7 +148,11 @@ function ClientOrders() {
                     <p>Komentarz: {reviews.find((r) => r.orderId === o.id).comment}</p>
                     <p>Ocena: {reviews.find((r) => r.orderId === o.id).rating}</p>
                   </div>
-                ) : o.status !== 5 ? "" : (
+                ) : o.status !== 5 ? (
+                  <div id='div2'>
+                    <p></p>
+                  </div>
+                ) : (
                   <form onSubmit={() => addReview(o.id)}>
                     <div class='revind'>
                       <input type="text"
