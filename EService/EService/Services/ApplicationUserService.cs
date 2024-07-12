@@ -36,36 +36,33 @@ namespace EService.Services
         {
             var users = await _applicationUserRepository.GetAllUsersAsync();
             return _mapper.Map<List<ReturnApplicationUserDto>>(users);
-           // return await _applicationUserRepository.GetAllUsersAsync();
         }
         public async Task<ReturnApplicationUserDto?> GetUserAsync(int id)
         {
             var user = await _applicationUserRepository.GetUserByIdAsync(id);
             return _mapper.Map<ReturnApplicationUserDto>(user);
-           // return await _applicationUserRepository.GetUserByIdAsync(id);
         }
         public async Task<List<ReturnRoleDto>> GetAllRolesAsync()
         {
             var roles = await _applicationUserRepository.GetAllRolesAsync();
             return _mapper.Map<List<ReturnRoleDto>>(roles);
-            //return await _applicationUserRepository.GetAllRolesAsync();
         }
         public async Task<ReturnRoleDto?> GetRoleAsync(int id)
         {
             var role = await _applicationUserRepository.GetRoleByIdAsync(id);
             return _mapper.Map<ReturnRoleDto>(role);
-            //return await _applicationUserRepository.GetRoleByIdAsync(id);
-
         }
         public async Task<(bool Confirmed, string Response)> AddUserRolesAsync(UpdateRolesDto request, int id)
         {
             var user = await _applicationUserRepository.GetUserByIdAsync(id);
             if (user == null) return await Task.FromResult((false, "User with given id does not exist."));
+            if (request.RoleNames.Count == 0) return await Task.FromResult((false, "No fields to be updated."));
             List<Role> roles = new List<Role>();
             foreach (var roleName in request.RoleNames)
             {
                 var role = await _applicationUserRepository.GetRoleByNameAsync(roleName);
                 if (role == null) return await Task.FromResult((false, "Role with given name does not exist."));
+                if (role == null || role.Name == roleName) return await Task.FromResult((false, $"User already has the role {roleName}."));
                 user.Roles.Add(role);
                 role.Users.Add(user);
             }
@@ -76,6 +73,7 @@ namespace EService.Services
         {
             var user = await _applicationUserRepository.GetUserByIdAsync(id);
             if (user == null) return await Task.FromResult((false, "User with given id does not exist."));
+            if (request.RoleNames.Count == 0) return await Task.FromResult((false, "No fields to be updated."));
             List<Role> roles = new List<Role>();
             foreach (var roleName in request.RoleNames)
             {
@@ -107,7 +105,6 @@ namespace EService.Services
                 if (receivingUser == null) return await Task.FromResult<(bool, string, List<ReturnMessageDto>?)>((false, "Receiving user not found.", null));
                 List<Message> messages = await _messageRepository.GetAllMessagesSentByToAsync(sendingUser.Id, receivingUser.Id);
                 var messagesDto = _mapper.Map<List<ReturnMessageDto>>(messages);
-
                 return await Task.FromResult<(bool, string, List<ReturnMessageDto>?)>((true, "", messagesDto));
             }
             else
@@ -147,14 +144,9 @@ namespace EService.Services
 
             if (!(request.Text != null && request.Text != message.Text 
                 || request.SendingDate != null && request.SendingDate != message.SendingDate))
-            {
                 return await Task.FromResult((false, "No fields to be updated."));
-            }
-
-            message.Text = request.Text!;
-            message.SendingDate = request.SendingDate.Value; //sprawdzic oryginal
-
-
+            if(request.Text != null) message.Text = request.Text!;
+            if(request.SendingDate != null) message.SendingDate = request.SendingDate.Value;
             await _messageRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Message successfully updated."));
         }

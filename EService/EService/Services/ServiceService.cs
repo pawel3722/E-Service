@@ -32,13 +32,11 @@ namespace EService.Services
         {
             var review = await _serviceRepository.GetServiceById(id);
             return _mapper.Map<ReturnServiceDto>(review);
-           // return await _serviceRepository.GetServiceById(id);
         }
         public async Task<List<ReturnServiceDto>> GetAllServices()
         {
             var review = await _serviceRepository.GetAllServices();
             return _mapper.Map<List<ReturnServiceDto>>(review);
-           // return await _serviceRepository.GetAllServices();
         }
         public async Task<(bool Confirmed, string Response)> CreateService(CreateServiceDto request)
         {
@@ -56,11 +54,12 @@ namespace EService.Services
                 {
                     part = await _partRepository.GetPartByIdAsync(request.PartId.Value);
                     if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
+                    if (part.Model == null) return await Task.FromResult((false, "Cannot assign a part not related to any model."));
                     if (part.Service != null) return await Task.FromResult((false, "Part is used in another service."));
                     var newService = new Service
                     {
                         Status = ServiceStatus.Created,
-                        PartPrice = part == null ? 0 : part!.Model.Price,
+                        PartPrice = part == null ? 0 : part.Model!.Price,
                         ServicePrice = request.ServicePrice,
                         OrderId = request.OrderId,
                         Order = order,
@@ -81,7 +80,7 @@ namespace EService.Services
             var service = new Service
             {
                 Status = ServiceStatus.Created,
-                PartPrice = part == null ? 0 : part!.Model.Price,
+                PartPrice = part == null ? 0 : part.Model!.Price,
                 ServicePrice = request.ServicePrice,
                 OrderId = request.OrderId,
                 Order = order,
@@ -101,8 +100,6 @@ namespace EService.Services
             Order? order = null;
             ServiceType? serviceType = null;
             Part? part = null;
-
-            //NOWE
             if (!(request.ServicePrice != null && request.ServicePrice != service.ServicePrice
                 || request.Status != null && request.Status != service.Status
                 || request.Date != null && request.Date != service.Date
@@ -111,65 +108,8 @@ namespace EService.Services
                 || request.ServicemanId != null && request.ServicemanId != service.ServicemanId
                 || request.ServiceTypeId != null && request.ServiceTypeId != service.ServiceTypeId
                 || request.PartId != null && request.PartId != service.PartId))
-            {
                 return await Task.FromResult((false, "No fields to be updated."));
-            }
-            order = await _orderRepository.GetOrderByIdAsync(request.OrderId.Value);
-            if (order == null) return await Task.FromResult((false, "Order with given id does not exist."));
-            service.OrderId = request.OrderId.Value;
-            service.Order = order;
-
-            serviceman = await _applicationUserRepository.GetUserByIdAsync(request.ServicemanId.Value);
-            if (serviceman == null) return await Task.FromResult((false, "Serviceman with given id does not exist."));
-            service.ServicemanId = request.ServicemanId;
-            service.Serviceman = serviceman;
-            service.Status = ServiceStatus.AssignedWorker;
-            var thisOrder = await _orderRepository.GetOrderByIdAsync(service.OrderId);
-            if (thisOrder!.Status == OrderStatus.FinishedAnalysis)
-            {
-                bool allAssigned = true;
-                foreach (var s in thisOrder!.Services)
-                {
-                    if (s.Status != ServiceStatus.AssignedWorker)
-                    {
-                        allAssigned = false;
-                        break;
-                    }
-                }
-                if (allAssigned) service.Order.Status = OrderStatus.AssignedActions;
-            }
-
-            serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(request.ServiceTypeId.Value);
-            if (serviceType == null) return await Task.FromResult((false, "Service type with given id does not exist."));
-            service.ServiceTypeId = request.ServiceTypeId.Value;
-            service.ServiceType = serviceType;
-
-            using var scope = new TransactionScope(TransactionScopeOption.Required,
-                    new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted },
-                    TransactionScopeAsyncFlowOption.Enabled);
-            try
-            {
-                part = await _partRepository.GetPartByIdAsync(request.PartId.Value);
-                if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
-                if (part.Service != null) return await Task.FromResult((false, "Part is used in another service."));
-                part.Service = service;
-                double price = part.Model!.Price;
-                service.PartPrice = price;
-                await _serviceRepository.SaveChangesAsync();
-                scope.Complete();
-                return await Task.FromResult((true, "Service successfully updated."));
-            }
-            catch (Exception ex)
-            {
-                return await Task.FromResult((false, "Error during processing request."));
-            }
-            await _serviceRepository.SaveChangesAsync();
-            return await Task.FromResult((true, "Service successfully updated."));
-
-            //NOWE
-
-
-            /*if (request.ServicePrice != null) service.ServicePrice = request.ServicePrice.Value;
+            if(request.ServicePrice != null) service.ServicePrice = request.ServicePrice.Value;
             if(request.Status != null) service.Status = request.Status.Value;
             if(request.Date != null) service.Date = request.Date.Value;
             if(request.Guarantee != null) service.Guarantee = request.Guarantee.Value;
@@ -218,6 +158,7 @@ namespace EService.Services
                 {
                     part = await _partRepository.GetPartByIdAsync(request.PartId.Value);
                     if (part == null) return await Task.FromResult((false, "Part with given id does not exist."));
+                    if (part.Model == null) return await Task.FromResult((false, "Cannot assign a part not related to any model."));
                     if (part.Service != null) return await Task.FromResult((false, "Part is used in another service."));
                     part.Service = service;
                     double price = part.Model!.Price;
@@ -232,7 +173,7 @@ namespace EService.Services
                 }
             }
             await _serviceRepository.SaveChangesAsync();
-            return await Task.FromResult((true, "Service successfully updated.")); */
+            return await Task.FromResult((true, "Service successfully updated."));
         }
         public async Task<(bool Confirmed, string Response)> UpdateServiceStatus(UpdateServiceDto request, int id)
         {
@@ -241,42 +182,12 @@ namespace EService.Services
             var service = await _serviceRepository.GetServiceById(id);
             if(service == null) return await Task.FromResult((false, "Service with given id does not exist."));
             if(service.ServicemanId != user.Id) return await Task.FromResult((false, "Service does not belong to this serviceman."));
-
-
-
-            //NOWE
-            //Czy ma byc to: request.Status != service.Status
-            //czy ten if w dobrym mijescu: if(service.Status == ServiceStatus.Finished)
-            if (!(request.Status != null && request.Status > ServiceStatus.AssignedWorker && request.Status != service.Status
+            if(request.Status != null && request.Status <= ServiceStatus.AssignedWorker) return await Task.FromResult((false, "Service status cannot be changed to the status \"Created\"."));
+            if (!(request.Status != null && request.Status != service.Status
                 || request.Date != null && request.Date != service.Date
-                || request.Guarantee != null && request.Guarantee != service.Guarantee
-                ))
-            {
+                || request.Guarantee != null && request.Guarantee != service.Guarantee))
                 return await Task.FromResult((false, "No fields to be updated."));
-            }
-            service.Status = request.Status.Value;
-            if (service.Status == ServiceStatus.Finished)
-            {
-                bool allFinished = true;
-                Order order = (await _orderRepository.GetOrderByIdAsync(service.OrderId))!;
-                foreach (var orderService in order.Services)
-                {
-                    if (orderService.Status != ServiceStatus.Finished)
-                    {
-                        allFinished = false;
-                        break;
-                    }
-                }
-                if (allFinished) order.Status = OrderStatus.Finished;
-            }
-            service.Date = request.Date.Value;
-            service.Guarantee = request.Guarantee.Value;
-
-            await _serviceRepository.SaveChangesAsync();
-            return await Task.FromResult((true, "Service successfully updated."));
-            //NOWE
-
-            /*if (request.Status != null && request.Status > ServiceStatus.AssignedWorker) service.Status = request.Status.Value;
+            if (request.Status != null && request.Status > ServiceStatus.AssignedWorker) service.Status = request.Status.Value;
             if(service.Status == ServiceStatus.Finished)
             {
                 bool allFinished = true;
@@ -294,7 +205,7 @@ namespace EService.Services
             if(request.Date != null) service.Date = request.Date.Value;
             if(request.Guarantee != null) service.Guarantee = request.Guarantee.Value;
             await _serviceRepository.SaveChangesAsync();
-            return await Task.FromResult((true, "Service successfully updated.")); */
+            return await Task.FromResult((true, "Service successfully updated."));
         }
         public async Task <(bool Confirmed, string Response)> DeleteService(int id)
         {
