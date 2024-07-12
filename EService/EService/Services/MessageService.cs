@@ -59,8 +59,15 @@ namespace EService.Services
         {
             var message = await _messageRepository.GetMessageByIdAsync(id);
             if(message == null) return await Task.FromResult((false, "Message with given id does not exist."));
-            if(request.Text != null) message.Text = request.Text!;
-            if(request.SendingDate != null) message.SendingDate = request.SendingDate.Value;
+
+            if (!(request.Text != null && request.Text != message.Text 
+                || request.SendingDate != null && request.SendingDate != message.SendingDate))
+            {
+                return await Task.FromResult((false, "No fields to be updated."));
+            }
+
+            message.Text = request.Text!;
+            message.SendingDate = request.SendingDate.Value;
             await _messageRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Message successfully updated."));
         }

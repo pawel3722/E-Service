@@ -49,10 +49,24 @@ namespace EService.Services
             var serviceType = await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
             if (serviceType == null) return await Task.FromResult((false, "Service type with given id does not exist."));
             if (request.MaxPrice < request.MinPrice) return await Task.FromResult((false, "Max value must be greater than min value."));
-            if(request.Name != null) serviceType.Name = request.Name;
-            if (request.MinPrice != null) serviceType.MinPrice = request.MinPrice.Value;
-            if (request.MaxPrice != null) serviceType.MaxPrice = request.MaxPrice.Value;
-            if (request.DeviceType != null) serviceType.DeviceType = request.DeviceType;
+
+            if (!(request.Name != null && request.Name != serviceType.Name 
+                || request.MinPrice != null && request.MinPrice != serviceType.MinPrice
+                || request.MaxPrice != null && request.MaxPrice != serviceType.MaxPrice 
+                || request.DeviceType != null && request.DeviceType != serviceType.DeviceType))
+            {
+                return await Task.FromResult((false, "No fields to be updated."));
+            }
+            serviceType.Name = request.Name;
+            serviceType.MinPrice = request.MinPrice.Value;
+            serviceType.MaxPrice = request.MaxPrice.Value;
+            serviceType.DeviceType = request.DeviceType;
+
+            /* if(request.Name != null) serviceType.Name = request.Name;
+             if (request.MinPrice != null) serviceType.MinPrice = request.MinPrice.Value;
+             if (request.MaxPrice != null) serviceType.MaxPrice = request.MaxPrice.Value;
+             if (request.DeviceType != null) serviceType.DeviceType = request.DeviceType; */
+
             await _serviceTypeRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Service type successfully updated."));
         }
