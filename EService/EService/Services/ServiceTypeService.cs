@@ -21,13 +21,11 @@ namespace EService.Services
         {
             var review = await _serviceTypeRepository.GetAllServiceTypesAsync();
             return _mapper.Map<List<ReturnServiceTypeDto>>(review);
-            //return await _serviceTypeRepository.GetAllServiceTypesAsync();
         }
         public async Task<ReturnServiceTypeDto?> GetServiceTypeAsync(int id)
         {
             var review = await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
             return _mapper.Map<ReturnServiceTypeDto>(review);
-           // return await _serviceTypeRepository.GetServiceTypeByIdAsync(id);
         }
         public async Task<(bool Confirmed, string Response)> CreateServiceTypeAsync(CreateServiceTypeDto request)
         {
@@ -54,19 +52,11 @@ namespace EService.Services
                 || request.MinPrice != null && request.MinPrice != serviceType.MinPrice
                 || request.MaxPrice != null && request.MaxPrice != serviceType.MaxPrice 
                 || request.DeviceType != null && request.DeviceType != serviceType.DeviceType))
-            {
                 return await Task.FromResult((false, "No fields to be updated."));
-            }
-            serviceType.Name = request.Name;
-            serviceType.MinPrice = request.MinPrice.Value;
-            serviceType.MaxPrice = request.MaxPrice.Value;
-            serviceType.DeviceType = request.DeviceType;
-
-            /* if(request.Name != null) serviceType.Name = request.Name;
-             if (request.MinPrice != null) serviceType.MinPrice = request.MinPrice.Value;
-             if (request.MaxPrice != null) serviceType.MaxPrice = request.MaxPrice.Value;
-             if (request.DeviceType != null) serviceType.DeviceType = request.DeviceType; */
-
+            if (request.Name != null) serviceType.Name = request.Name;
+            if (request.MinPrice != null) serviceType.MinPrice = request.MinPrice.Value;
+            if (request.MaxPrice != null) serviceType.MaxPrice = request.MaxPrice.Value;
+            if (request.DeviceType != null) serviceType.DeviceType = request.DeviceType;
             await _serviceTypeRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Service type successfully updated."));
         }

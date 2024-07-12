@@ -19,13 +19,11 @@ namespace EService.Services
         {
             var models = await _modelRepository.GetAllModelsAsync();
             return _mapper.Map<List<ReturnModelDto>>(models);
-            //return await _modelRepository.GetAllModelsAsync();
         }
         public async Task<ReturnModelDto?> GetModelAsync(int id)
         {
             var model = await _modelRepository.GetModelByIdAsync(id);
             return _mapper.Map<ReturnModelDto>(model);
-            //return await _modelRepository.GetModelByIdAsync(id);
         }
         public async Task<(bool Confirmed, string Response)> CreateModelAsync(CreateModelDto request)
         {
@@ -53,22 +51,13 @@ namespace EService.Services
         {
             var model = await _modelRepository.GetModelByIdAsync(id);
             if (model == null) return await Task.FromResult((false, "Model with given id does not exist."));
-
             if (!(request.Name != null && request.Name != model.Name 
                 || request.Type != null && request.Type != model.Type 
                 || request.Price != null && request.Price != model.Price))
-            {
                 return await Task.FromResult((false, "No fields to be updated."));
-            }
-            model.Name = request.Name!;
-            model.Type = request.Type!;
-            model.Price = request.Price.Value;
-
-            /*
             if (request.Name != null) model.Name = request.Name!;
             if (request.Type != null) model.Type = request.Type!;
-            if (request.Price != null) model.Price = request.Price.Value;*/
-
+            if (request.Price != null) model.Price = request.Price.Value;
             await _modelRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Model successfully updated."));
         }

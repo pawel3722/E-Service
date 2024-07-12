@@ -24,13 +24,11 @@ namespace EService.Services
         {
             var reviews = await _reviewRepository.GetReviewByIdAsync(id);
             return _mapper.Map<ReturnReviewDto>(reviews);
-           // return await _reviewRepository.GetReviewByIdAsync(id);
         }
         public async Task<List<ReturnReviewDto>> GetAllReviewsAsync()
         {
             var review = await _reviewRepository.GetAllReviewsAsync();
             return _mapper.Map<List<ReturnReviewDto>>(review);
-           // return await _reviewRepository.GetAllReviewsAsync();
         }
         public async Task<(bool Confirmed, string Response)> CreateReviewAsync(CreateReviewDto request)
         {
@@ -52,26 +50,10 @@ namespace EService.Services
             var review = await _reviewRepository.GetReviewByIdAsync(id);
             if (review == null) return await Task.FromResult((false, "Review with given id does not exist."));
             Order? order = null;
-
-            //NOWE
             if (!(request.OrderId != null && request.OrderId != review.OrderId
                 || request.Rating != null && request.Rating != review.Rating))
-            {
                 return await Task.FromResult((false, "No fields to be updated."));
-
-            }
-
-            order = await _orderRepository.GetOrderByIdAsync(request.OrderId.Value);
-            if (order == null) return await Task.FromResult((false, "Order with given id does not exist."));
-            review.OrderId = request.OrderId.Value;
-            review.Order = order;
-            order.Review = review;
-
-            review.Rating = request.Rating.Value;
-            //MOWE
-
-
-            /*if (request.OrderId != null)
+            if (request.OrderId != null)
             {
                 order = await _orderRepository.GetOrderByIdAsync(request.OrderId.Value);
                 if (order == null) return await Task.FromResult((false, "Order with given id does not exist."));
@@ -79,10 +61,7 @@ namespace EService.Services
                 review.Order = order;
                 order.Review = review;
             }
-            if (request.Rating != null) review.Rating = request.Rating.Value; */
-
-
-
+            if (request.Rating != null) review.Rating = request.Rating.Value;
             await _reviewRepository.SaveChangesAsync();
             return await Task.FromResult((true, "Review successfully updated."));
         }
