@@ -32,6 +32,7 @@ import DeletePart from './pages/manager/parts/DeletePart';
 import ManagerHomePageWidget from './components/ManagerHomePageWidget';
 import ServicemanHomePageWidget from './components/ServicemanHomePageWidget';
 import SellerHomePageWidget from './components/SellerHomePageWidget';
+import Register from './pages/Register';
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         <Route path="uslugi" element={<Uslugi />} />
         <Route path="kontakt" element={<Kontakt />} />
         <Route path="log" element={<Log />} />
+        <Route path="register" element={<Register />} />
 
         <Route element={<PersistLogin />}>
           <Route element={<ProtectedRoutes />} >

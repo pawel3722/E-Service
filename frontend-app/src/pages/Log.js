@@ -121,7 +121,7 @@ function Log() {
                 </form>
 
                 <div className='reg'>
-                    <button className='regBtn' onClick={() => navigate('/home')}>
+                    <button className='regBtn' onClick={() => navigate('/register')}>
                         Register
                     </button>
                 </div>
